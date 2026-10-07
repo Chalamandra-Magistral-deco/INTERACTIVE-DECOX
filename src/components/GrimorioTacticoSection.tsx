@@ -192,7 +192,7 @@ const GrimorioTacticoSection: React.FC = () => {
                                                     <p className="text-gray-400 leading-relaxed text-lg italic">"{poder.poder}"</p>
                                                     <div className="p-6 bg-black/40 rounded-3xl border border-white/5">
                                                         <span className="text-[10px] font-black text-yellow-500 uppercase tracking-widest block mb-2">Protocolo de Uso:</span>
-                                                        <p className="text-white text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: poder.ejemploDeUso }}></p>
+                                                        <p className="text-white text-sm leading-relaxed"><StrongText>{poder.ejemploDeUso}</StrongText></p>
                                                     </div>
                                                 </div>
 
