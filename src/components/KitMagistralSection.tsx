@@ -87,7 +87,8 @@ const KitMagistralSection: React.FC<KitMagistralSectionProps> = ({ onShowDiscove
                 <p className="text-sm text-gray-500 uppercase tracking-widest">Inversión en tu Maestría</p>
                 <p className="text-6xl font-black text-white">$397 <span className="text-xl text-gray-400">USD</span></p>
                 <a 
-                    href="?payment_success=true&service=magistral" 
+                    href={import.meta.env.VITE_MAGISTRAL_PAYMENT_URL || "#"} 
+                    onClick={(event) => { if (!import.meta.env.VITE_MAGISTRAL_PAYMENT_URL) event.preventDefault(); }}
                     className="inline-block px-12 py-5 bg-purple-600 text-white font-black rounded-2xl text-xl shadow-[0_0_50px_rgba(147,51,234,0.3)] hover:scale-105 transition-all pulse-glow"
                 >
                     ADQUIRIR KIT MAGISTRAL

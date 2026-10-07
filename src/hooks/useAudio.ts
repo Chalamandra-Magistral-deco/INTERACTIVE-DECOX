@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState } from 'react';
+import { useRef, useCallback, useEffect, useState } from 'react';
 import * as Tone from 'tone';
 
 export const useAudio = () => {
@@ -59,10 +59,18 @@ export const useAudio = () => {
 
     const startAudioContext = useCallback(async () => {
         if (isAudioContextStarted) return;
-        await Tone.start();
-        initAudio();
-        setIsAudioContextStarted(true);
+        try {
+            await Tone.start();
+            initAudio();
+            setIsAudioContextStarted(true);
+        } catch (error) {
+            console.error('Unable to start audio context:', error);
+        }
     }, [isAudioContextStarted, initAudio]);
+
+    useEffect(() => () => {
+        Object.values(synths.current).forEach((synth) => synth?.dispose());
+    }, []);
 
     const playSound = useCallback((type: keyof typeof synths.current, note?: string, duration?: string, time?: number) => {
         if (!isAudioContextStarted) return;

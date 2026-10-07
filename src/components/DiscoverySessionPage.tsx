@@ -104,7 +104,7 @@ const DiscoverySessionPage: React.FC = () => {
                 <div>
                     <p className="text-sm text-gray-500 uppercase tracking-widest mb-4">Inversión en tu Evolución</p>
                     <p className="text-6xl font-black text-white mb-6">$27 <span className="text-xl text-gray-400">USD</span></p>
-                    <a href="https://ko-fi.com/s/e85f9cd5e1" target="_blank" rel="noopener noreferrer" className="inline-block px-12 py-5 bg-yellow-500 text-black font-black rounded-2xl text-xl shadow-[0_0_50px_rgba(234,179,8,0.3)] hover:scale-105 transition-all pulse-glow">
+                    <a href={import.meta.env.VITE_DISCOVERY_PAYMENT_URL || "#"} target="_blank" rel="noopener noreferrer" onClick={(event) => { if (!import.meta.env.VITE_DISCOVERY_PAYMENT_URL) event.preventDefault(); }} className="inline-block px-12 py-5 bg-yellow-500 text-black font-black rounded-2xl text-xl shadow-[0_0_50px_rgba(234,179,8,0.3)] hover:scale-105 transition-all pulse-glow">
                         OBTENER MI KIT AHORA
                     </a>
                     <p className="text-xs text-gray-500 mt-6">Acceso inmediato y de por vida.</p>

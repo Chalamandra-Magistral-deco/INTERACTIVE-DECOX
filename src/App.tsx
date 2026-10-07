@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import * as Tone from 'tone';
+import React, { useState, useCallback } from 'react';
 import { HACKS_DATA, PODERES_SHEREZADE_DATA, CERTIFICATIONS_DATA } from '@/utils/constants';
-import { Hack, ModalState, Archetype, PoderDeSherezade, Certification, PurchasedService, ServiceType } from '@/utils/types';
+import { Hack, ModalState, Archetype, PurchasedService } from '@/utils/types';
 import { generateStrategicDirective } from '@/services/geminiService';
+import { useAudio } from '@/hooks/useAudio';
+import { loadJson, loadNumberSet, loadString, saveJson } from '@/utils/storage';
 import Confetti from '@/components/Confetti';
 import { toast } from 'sonner';
 
@@ -33,169 +34,22 @@ import WhatsAppFloat from '@/components/WhatsAppFloat';
 import TheCodex from '@/components/TheCodex';
 
 // Modal Content
-import PostPaymentPage from '@/components/PostPaymentPage';
 import DiscoverySessionPage from '@/components/DiscoverySessionPage';
 import KitMagistralSection from '@/components/KitMagistralSection';
 import HackPracticeModule from '@/components/HackPracticeModule';
 import HackEducationalModule from '@/components/HackEducationalModule';
-import { ThemeProvider } from '@/components/theme-provider';
 
 const App = () => {
-    const [completedHacks, setCompletedHacks] = useState<Set<number>>(new Set());
-    const [earnedCerts, setEarnedCerts] = useState<Set<number>>(new Set());
-    const [purchasedServices, setPurchasedServices] = useState<PurchasedService[]>([]);
+    const [completedHacks, setCompletedHacks] = useState<Set<number>>(() => loadNumberSet('completedHacks'));
+    const [earnedCerts, setEarnedCerts] = useState<Set<number>>(() => loadNumberSet('earnedCertifications'));
+    const [purchasedServices, setPurchasedServices] = useState<PurchasedService[]>(() => loadJson<PurchasedService[]>('purchasedServices', []));
     const [modalState, setModalState] = useState<ModalState>({ isOpen: false, type: null, data: null });
     const [celebrate, setCelebrate] = useState(false);
-    const [dominantArchetype, setDominantArchetype] = useState<Archetype | null>(null);
+    const [dominantArchetype, setDominantArchetype] = useState<Archetype | null>(() => loadString('dominantArchetype') as Archetype | null);
     const [aiDirective, setAiDirective] = useState('');
     const [isDirectiveLoading, setIsDirectiveLoading] = useState(false);
-    const [isAudioContextStarted, setIsAudioContextStarted] = useState(false);
 
-    // --- Audio Synths Refs ---
-    const synths = useRef<{
-        completion: Tone.Synth | null;
-        directive: Tone.Synth | null;
-        celebration: Tone.Synth | null;
-        uiClick: Tone.Synth | null;
-        modalOpen: Tone.NoiseSynth | null;
-        modalClose: Tone.NoiseSynth | null;
-        quizSelect: Tone.MembraneSynth | null;
-        comboReveal: Tone.FMSynth | null;
-    }>({
-        completion: null,
-        directive: null,
-        celebration: null,
-        uiClick: null,
-        modalOpen: null,
-        modalClose: null,
-        quizSelect: null,
-        comboReveal: null,
-    });
-
-    const startAudioContext = useCallback(async () => {
-        if (isAudioContextStarted) return;
-        await Tone.start();
-        setIsAudioContextStarted(true);
-    }, [isAudioContextStarted]);
-
-    const handleCelebration = useCallback(() => {
-        setCelebrate(true);
-        if (isAudioContextStarted) {
-            const now = Tone.now();
-            ['C4', 'E4', 'G4', 'C5'].forEach((note, i) => {
-                playSound('celebration', note, "8n", now + i * 0.15);
-            });
-        }
-        setTimeout(() => setCelebrate(false), 4000);
-    }, [isAudioContextStarted]);
-
-    const checkCertifications = useCallback((hacks: Set<number>, currentCerts: Set<number>) => {
-        const newCerts = new Set(currentCerts);
-        let earnedAny = false;
-
-        CERTIFICATIONS_DATA.forEach(cert => {
-            if (newCerts.has(cert.id)) return;
-
-            let isEarned = false;
-            if (cert.id === 1) {
-                // Special case: any 3 hacks
-                isEarned = hacks.size >= 3;
-            } else {
-                isEarned = cert.requiredHacks.every(id => hacks.has(id));
-            }
-
-            if (isEarned) {
-                newCerts.add(cert.id);
-                earnedAny = true;
-                toast.success(`¡Certificación Obtenida: ${cert.title}!`, {
-                    description: cert.description,
-                    icon: <i className={`${cert.icon} ${cert.color}`}></i>,
-                    duration: 5000,
-                });
-            }
-        });
-
-        if (earnedAny) {
-            setEarnedCerts(newCerts);
-            localStorage.setItem('earnedCertifications', JSON.stringify(Array.from(newCerts)));
-            handleCelebration();
-        }
-    }, [handleCelebration]);
-
-    // --- Sound Playing Functions ---
-    const playSound = (type: keyof typeof synths.current, note?: string, duration?: string, time?: number) => {
-        if (!isAudioContextStarted) return;
-        const synth = synths.current[type];
-        if (!synth) return;
-
-        if (synth instanceof Tone.NoiseSynth) {
-            synth.triggerAttackRelease(duration || "8n", time || Tone.now());
-        } else if (note) {
-            synth.triggerAttackRelease(note, duration || "16n", time || Tone.now());
-        }
-    };
-
-    useEffect(() => {
-        // --- Initialize all synths ---
-        synths.current.completion = new Tone.Synth({ oscillator: { type: 'triangle' }, envelope: { attack: 0.02, decay: 0.1, sustain: 0.3, release: 0.4 } }).toDestination();
-        synths.current.directive = new Tone.Synth().toDestination();
-        synths.current.celebration = new Tone.Synth().toDestination();
-        synths.current.uiClick = new Tone.Synth({ volume: -15, oscillator: { type: 'sine' }, envelope: { attack: 0.001, decay: 0.1, sustain: 0.01, release: 0.1 } }).toDestination();
-        synths.current.modalOpen = new Tone.NoiseSynth({ volume: -20, noise: { type: 'white' }, envelope: { attack: 0.005, decay: 0.2, sustain: 0 } }).toDestination();
-        synths.current.modalClose = new Tone.NoiseSynth({ volume: -25, noise: { type: 'pink' }, envelope: { attack: 0.005, decay: 0.15, sustain: 0 } }).toDestination();
-        synths.current.quizSelect = new Tone.MembraneSynth({ volume: -10 }).toDestination();
-        synths.current.comboReveal = new Tone.FMSynth({ volume: -10, harmonicity: 2, modulationIndex: 3 }).toDestination();
-        
-        // Load data from localStorage
-        const savedHacks = localStorage.getItem('completedHacks');
-        const hacksSet = new Set<number>();
-        if (savedHacks) {
-            const parsed = JSON.parse(savedHacks);
-            parsed.forEach((id: number) => hacksSet.add(id));
-            setCompletedHacks(hacksSet);
-        }
-
-        const savedCerts = localStorage.getItem('earnedCertifications');
-        const certsSet = new Set<number>();
-        if (savedCerts) {
-            const parsed = JSON.parse(savedCerts);
-            parsed.forEach((id: number) => certsSet.add(id));
-            setEarnedCerts(certsSet);
-        }
-
-        const savedServices = localStorage.getItem('purchasedServices');
-        if (savedServices) {
-            setPurchasedServices(JSON.parse(savedServices));
-        }
-
-        const savedArchetype = localStorage.getItem('dominantArchetype');
-        if (savedArchetype) {
-            setDominantArchetype(savedArchetype as Archetype);
-        }
-        
-        // Check for post-payment redirect
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('payment_success') === 'true') {
-            const service = params.get('service') as ServiceType;
-            const archetype = (localStorage.getItem('dominantArchetype') as Archetype) || null;
-            if (service) {
-                 // Add to purchased services if not already there
-                 const currentServices = JSON.parse(localStorage.getItem('purchasedServices') || '[]');
-                 if (!currentServices.find((s: PurchasedService) => s.type === service)) {
-                     const newService: PurchasedService = {
-                         type: service,
-                         date: new Date().toISOString(),
-                         status: 'pending'
-                     };
-                     const updatedServices = [...currentServices, newService];
-                     setPurchasedServices(updatedServices);
-                     localStorage.setItem('purchasedServices', JSON.stringify(updatedServices));
-                 }
-                 setModalState({ isOpen: true, type: 'postPayment', data: { serviceName: service, archetype: archetype } });
-                 window.history.replaceState({}, document.title, window.location.pathname);
-            }
-        }
-    }, []);
+    const { startAudioContext, playSound } = useAudio();
     
     const toggleHackCompletion = useCallback((id: number) => {
         const newCompleted = new Set(completedHacks);
@@ -204,14 +58,14 @@ const App = () => {
         if (isCompleting) {
             newCompleted.add(id);
             playSound('completion', 'C5', '16n');
-            playSound('completion', 'G5', '16n', Tone.now() + 0.1);
+            playSound('completion', 'G5', '16n', undefined);
             checkCertifications(newCompleted, earnedCerts);
         } else {
             newCompleted.delete(id);
         }
         
         setCompletedHacks(newCompleted);
-        localStorage.setItem('completedHacks', JSON.stringify(Array.from(newCompleted)));
+        saveJson('completedHacks', Array.from(newCompleted));
     }, [completedHacks, earnedCerts, checkCertifications]);
 
     const handleGenerateDirective = async () => {
@@ -228,7 +82,7 @@ const App = () => {
             const directive = await generateStrategicDirective(completedHackTitles, remainingHacks, archetypeInfo);
             setAiDirective(directive);
             playSound('directive', 'G5', '32n');
-            playSound('directive', 'D6', '32n', Tone.now() + 0.075);
+            playSound('directive', 'D6', '32n', undefined);
 
         } catch (error: any) {
             console.error("Error generating directive:", error);
@@ -250,7 +104,7 @@ const App = () => {
 
     const handleQuizComplete = useCallback((archetype: Archetype) => {
         setDominantArchetype(archetype);
-        localStorage.setItem('dominantArchetype', archetype);
+        saveJson('dominantArchetype', archetype);
         handleCelebration();
         setTimeout(() => {
             document.getElementById('dashboard')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -260,9 +114,12 @@ const App = () => {
     const handleRetakeQuiz = () => {
         playSound('uiClick', 'G5', '32n');
         setDominantArchetype(null);
+        setCompletedHacks(new Set());
+        setEarnedCerts(new Set());
+        setAiDirective('');
         localStorage.removeItem('dominantArchetype');
         localStorage.removeItem('completedHacks');
-        setCompletedHacks(new Set());
+        localStorage.removeItem('earnedCertifications');
     };
 
     const renderModalContent = () => {
@@ -322,11 +179,6 @@ const App = () => {
                     </div>
                 );
                 break;
-            case 'postPayment':
-                title = 'Transmisión Exitosa';
-                subtitle = 'El protocolo ha sido actualizado.';
-                modalBody = <PostPaymentPage serviceName={modalState.data.serviceName} archetype={modalState.data.archetype} />;
-                break;
         }
 
         return (
@@ -350,7 +202,7 @@ const App = () => {
     };
 
     return (
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+        
             <div className="bg-black min-h-screen font-sans selection:bg-yellow-400 selection:text-black" onClick={startAudioContext}>
                 <SEO />
                 <Toaster position="top-center" expand={false} richColors theme="dark" />
@@ -401,8 +253,8 @@ const App = () => {
                     <GrimorioTacticoSection />
                     <OraculoChalamandra onComboReveal={() => {
                         playSound('comboReveal', 'C4', '16n');
-                        playSound('comboReveal', 'E4', '16n', Tone.now() + 0.07);
-                        playSound('comboReveal', 'A4', '16n', Tone.now() + 0.14);
+                        playSound('comboReveal', 'E4', '16n', undefined);
+                        playSound('comboReveal', 'A4', '16n', undefined);
                     }} />
                     <KitMagistralRPG onOpenModule={(id) => showModal('hack', HACKS_DATA.find(h => h.id === id))} />
                     <SrapRitual onActivate={() => showModal('srap')} playUIClick={() => playSound('uiClick', 'G5', '32n')} />
@@ -420,7 +272,7 @@ const App = () => {
                 </AnimatePresence>
                 <WhatsAppFloat />
             </div>
-        </ThemeProvider>
+
     );
 };
 
