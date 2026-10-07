@@ -1,146 +1,150 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
-import * as Tone from 'tone';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import * as Tone from "tone";
 
 const SRAPMetronome: React.FC = () => {
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [bpm, setBpm] = useState(60);
-    const [isPulsingVisual, setIsPulsingVisual] = useState(false);
-    const [isAudioContextStarted, setIsAudioContextStarted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [bpm, setBpm] = useState(60);
+  const [isPulsingVisual, setIsPulsingVisual] = useState(false);
+  const synthRef = useRef<Tone.MembraneSynth | null>(null);
+  const loopRef = useRef<Tone.Loop | null>(null);
 
-    const loopRef = useRef<Tone.Loop | null>(null);
-    const synthRef = useRef<Tone.MembraneSynth | null>(null);
+  const ensureAudio = useCallback(async (): Promise<void> => {
+    await Tone.start();
 
-    const startAudioContext = useCallback(async () => {
-        if (isAudioContextStarted) return;
-        await Tone.start();
-        console.log("AudioContext started for Metronome!");
-        setIsAudioContextStarted(true);
-    }, [isAudioContextStarted]);
-    
-    // Initialize synth once audio context is started
-    useEffect(() => {
-        if (!synthRef.current) {
-            synthRef.current = new Tone.MembraneSynth({
-                pitchDecay: 0.01,
-                octaves: 6,
-                envelope: {
-                    attack: 0.001,
-                    decay: 0.2,
-                    sustain: 0,
-                    release: 0.4
-                },
-            }).toDestination();
-        }
-    }, []);
+    if (!synthRef.current) {
+      synthRef.current = new Tone.MembraneSynth({
+        pitchDecay: 0.01,
+        octaves: 6,
+        envelope: {
+          attack: 0.001,
+          decay: 0.2,
+          sustain: 0,
+          release: 0.4,
+        },
+      }).toDestination();
+    }
+  }, []);
 
-    const stopMetronome = useCallback(() => {
-        if (loopRef.current) {
-            loopRef.current.stop(0);
-            loopRef.current.dispose();
-            loopRef.current = null;
-        }
-        if (Tone.Transport.state !== 'stopped') {
-            Tone.Transport.stop();
-            Tone.Transport.cancel();
-        }
-        setIsPlaying(false);
-    }, []);
+  const stopMetronome = useCallback((): void => {
+    loopRef.current?.stop(0);
+    loopRef.current?.dispose();
+    loopRef.current = null;
 
-    const startMetronome = useCallback(() => {
-        if (!isAudioContextStarted || !synthRef.current) return;
-        
-        stopMetronome();
+    if (Tone.Transport.state !== "stopped") {
+      Tone.Transport.stop();
+      Tone.Transport.cancel();
+    }
 
-        Tone.Transport.bpm.value = bpm;
-        
-        loopRef.current = new Tone.Loop((time) => {
-            if (synthRef.current) {
-                synthRef.current.triggerAttackRelease('C2', '8n', time);
-            }
-            
-            Tone.Draw.schedule(() => {
-                setIsPulsingVisual(true);
-                setTimeout(() => setIsPulsingVisual(false), 100);
-            }, time);
-        }, '4n').start(0);
+    setIsPlaying(false);
+  }, []);
 
-        Tone.Transport.start();
-        setIsPlaying(true);
-    }, [bpm, stopMetronome, isAudioContextStarted]);
+  const startMetronome = useCallback((): void => {
+    const synth = synthRef.current;
+    if (!synth) return;
 
-    const handleTogglePlay = async () => {
-        if (!isAudioContextStarted) {
-            await startAudioContext();
-        }
+    stopMetronome();
 
-        if (isPlaying) {
-            stopMetronome();
-        } else {
-            // Short delay allows the audio context to fully initialize on first click
-            setTimeout(() => {
-                startMetronome();
-            }, 100);
-        }
+    Tone.Transport.bpm.value = bpm;
+    loopRef.current = new Tone.Loop((time) => {
+      synth.triggerAttackRelease("C2", "8n", time);
+
+      Tone.Draw.schedule(() => {
+        setIsPulsingVisual(true);
+        window.setTimeout(() => setIsPulsingVisual(false), 100);
+      }, time);
+    }, "4n").start(0);
+
+    Tone.Transport.start();
+    setIsPlaying(true);
+  }, [bpm, stopMetronome]);
+
+  const handleTogglePlay = async (): Promise<void> => {
+    if (isPlaying) {
+      stopMetronome();
+      return;
+    }
+
+    try {
+      await ensureAudio();
+      startMetronome();
+    } catch (error) {
+      console.error(
+        "Unable to start SRAP metronome:",
+        error instanceof Error ? error.message : "unknown",
+      );
+    }
+  };
+
+  const handleBpmChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const newBpm = Number(event.target.value);
+    setBpm(newBpm);
+
+    if (isPlaying) {
+      Tone.Transport.bpm.rampTo(newBpm, 0.05);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      stopMetronome();
+      synthRef.current?.dispose();
+      synthRef.current = null;
     };
-    
-    const handleBpmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newBpm = Number(e.target.value);
-        setBpm(newBpm);
-        if (isPlaying) {
-            Tone.Transport.bpm.value = newBpm;
-        }
-    };
+  }, [stopMetronome]);
 
-    // Cleanup on unmount
-    useEffect(() => {
-        return () => {
-            stopMetronome();
-        };
-    }, [stopMetronome]);
+  return (
+    <section className="bg-black px-6 py-20">
+      <div className="mx-auto max-w-4xl text-center">
+        <h2 className="mb-6 text-4xl font-black text-white">
+          <i className="fa-solid fa-wave-square mr-3 text-cyan-300" />
+          METRÓNOMO SRAP
+        </h2>
 
-    return (
-        <section className="py-20 px-6 bg-black">
-            <div className="max-w-4xl mx-auto text-center">
-                <h2 className="text-4xl font-black text-white mb-6">
-                    <i className="fa-solid fa-wave-square mr-3 text-cyan-300"></i> METRÓNOMO SRAP
-                </h2>
-                <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-                    Calibra tu frecuencia operativa. El Metrónomo te ayuda a encontrar el ritmo óptimo entre la acción y la pausa, la ejecución y la reflexión. Sincroniza tu tempo interno con las demandas del entorno.
-                </p>
+        <p className="mb-8 text-xl leading-relaxed text-gray-300">
+          Calibra tu frecuencia operativa entre acción y pausa, ejecución y
+          reflexión.
+        </p>
 
-                <div className="dashboard-widget max-w-lg mx-auto p-8">
-                    <div 
-                        className={`w-24 h-24 mx-auto mb-8 rounded-full border-4 border-cyan-400 flex items-center justify-center transition-all duration-100 relative ${isPulsingVisual ? 'bg-cyan-400/30 scale-110' : 'bg-transparent scale-100'}`}
-                    >
-                        <p className="text-4xl font-black text-white">{bpm}</p>
-                        <span className="text-sm text-gray-400 absolute -bottom-6">BPM</span>
-                    </div>
+        <div className="dashboard-widget mx-auto max-w-lg p-8">
+          <div
+            className={`relative mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full border-4 border-cyan-400 transition-all duration-100 ${
+              isPulsingVisual
+                ? "scale-110 bg-cyan-400/30"
+                : "scale-100 bg-transparent"
+            }`}
+          >
+            <p className="text-4xl font-black text-white">{bpm}</p>
+            <span className="absolute -bottom-6 text-sm text-gray-400">BPM</span>
+          </div>
 
-                    <div className="mb-8 pt-4">
-                        <label htmlFor="bpm-slider" className="sr-only">BPM</label>
-                        <input
-                            type="range"
-                            id="bpm-slider"
-                            min="40"
-                            max="200"
-                            value={bpm}
-                            onChange={handleBpmChange}
-                            className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer metronome-slider"
-                            aria-label={`Tempo de ${bpm} BPM`}
-                        />
-                    </div>
-                    
-                    <button 
-                        onClick={handleTogglePlay}
-                        className="px-10 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-black rounded-2xl shadow-2xl hover:from-cyan-600 hover:to-blue-600 transition-all text-lg btn-dynamic"
-                    >
-                        <i className={`fa-solid ${isPlaying ? 'fa-pause' : 'fa-play'} mr-2`}></i>
-                        {isPlaying ? 'DETENER' : 'INICIAR'}
-                    </button>
-                </div>
-            </div>
-        </section>
-    );
+          <div className="mb-8 pt-4">
+            <label htmlFor="bpm-slider" className="sr-only">
+              BPM
+            </label>
+            <input
+              type="range"
+              id="bpm-slider"
+              min="40"
+              max="200"
+              value={bpm}
+              onChange={handleBpmChange}
+              className="metronome-slider w-full cursor-pointer appearance-none rounded-lg bg-gray-700"
+              aria-label={`Tempo de ${bpm} BPM`}
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={() => void handleTogglePlay()}
+            className="btn-dynamic rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 px-10 py-4 text-lg font-black text-white shadow-2xl transition-all hover:from-cyan-600 hover:to-blue-600"
+          >
+            <i className={`fa-solid ${isPlaying ? "fa-pause" : "fa-play"} mr-2`} />
+            {isPlaying ? "DETENER" : "INICIAR"}
+          </button>
+        </div>
+      </div>
+    </section>
+  );
 };
 
 export default SRAPMetronome;
