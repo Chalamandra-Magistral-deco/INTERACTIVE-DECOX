@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Toaster, toast } from "sonner";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
+import * as Tone from "tone";
 
 import { CERTIFICATIONS_DATA, HACKS_DATA } from "@/utils/constants";
 import {
@@ -8,7 +9,6 @@ import {
   ModalData,
   ModalState,
   PurchasedService,
-  ServiceType,
 } from "@/utils/types";
 import { generateStrategicDirective } from "@/services/geminiService";
 import { verifyPaymentSession } from "@/services/paymentService";
@@ -378,14 +378,12 @@ const App: React.FC = () => {
 
       <Footer />
 
-      <AnimatePresence>
-        <ModalManager
+      <ModalManager
           modalState={modalState}
           hideModal={hideModal}
           showModal={showModal}
           toggleHackCompletion={toggleHackCompletion}
         />
-      </AnimatePresence>
 
       <WhatsAppFloat />
     </div>
