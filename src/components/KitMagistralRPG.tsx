@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import StrongText from "@/components/StrongText";
 import { HACKS_DATA, RPG_MODULES_DATA, RPG_MODULE_ORDER } from '@/utils/constants';
 import { Hack, Archetype } from '@/utils/types';
 import { motion, AnimatePresence } from 'motion/react';
@@ -54,7 +55,7 @@ const TwistComponent: React.FC<{twist: typeof RPG_MODULES_DATA[number]['twist']}
                                 {twist.content.map((item: string, index: number) => (
                                     <li key={index} className="flex items-start gap-2">
                                         <span className="text-white/20 mt-1">•</span>
-                                        <span dangerouslySetInnerHTML={{ __html: item.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>') }}></span>
+                                        <span ><StrongText>{item}</StrongText><span></span>
                                     </li>
                                 ))}
                             </ul>
