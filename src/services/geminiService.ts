@@ -36,12 +36,14 @@ export async function generateStrategicDirective(
   completedHacks: string,
   remainingHacks: string,
   archetypeInfo: string,
+  feedback = "Sin feedback previo.",
 ): Promise<string> {
   try {
     return await requestAI("strategicDirective", {
       completedHacks,
       remainingHacks,
       archetypeInfo,
+      feedback,
     });
   } catch (error) {
     console.error("Error generating strategic directive:", error);

@@ -85,6 +85,7 @@ const App: React.FC = () => {
     );
   const [aiDirective, setAiDirective] = useState("");
   const [isDirectiveLoading, setIsDirectiveLoading] = useState(false);
+  const [directiveFeedback, setDirectiveFeedback] = useState<"helpful" | "not-helpful" | null>(() => readJSON<"helpful" | "not-helpful" | null>("directiveFeedback", null));
 
   const {
     startAudioContext,
@@ -227,6 +228,7 @@ const App: React.FC = () => {
         completedHackTitles,
         remainingHacks,
         archetypeInfo,
+        directiveFeedback || "Sin feedback previo.",
       );
 
       setAiDirective(directive);
@@ -280,6 +282,8 @@ const App: React.FC = () => {
     playSound("uiClick", "G5", "32n");
     setDominantArchetype(null);
     localStorage.removeItem("dominantArchetype");
+    localStorage.removeItem("directiveFeedback");
+    setDirectiveFeedback(null);
     // Retaking the diagnostic must not erase earned work.
   }, [playSound]);
 
@@ -326,6 +330,11 @@ const App: React.FC = () => {
               aiDirective={aiDirective}
               isDirectiveLoading={isDirectiveLoading}
               purchasedServices={purchasedServices}
+              directiveFeedback={directiveFeedback}
+              onDirectiveFeedback={(feedback) => {
+                setDirectiveFeedback(feedback);
+                writeJSON("directiveFeedback", feedback);
+              }}
             />
             <PowerLensGenerator />
           </>

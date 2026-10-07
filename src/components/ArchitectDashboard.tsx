@@ -11,6 +11,8 @@ interface ArchitectDashboardProps {
     aiDirective: string;
     isDirectiveLoading: boolean;
     purchasedServices: PurchasedService[];
+    directiveFeedback: "helpful" | "not-helpful" | null;
+    onDirectiveFeedback: (feedback: "helpful" | "not-helpful") => void;
 }
 
 const ArchitectDashboard: React.FC<ArchitectDashboardProps> = ({
@@ -21,6 +23,8 @@ const ArchitectDashboard: React.FC<ArchitectDashboardProps> = ({
     aiDirective,
     isDirectiveLoading,
     purchasedServices,
+    directiveFeedback,
+    onDirectiveFeedback,
 }) => {
     const [displayedDirective, setDisplayedDirective] = useState("");
     const [activeTab, setActiveTab] = useState<'status' | 'certs' | 'protocols'>('status');
@@ -242,6 +246,16 @@ const ArchitectDashboard: React.FC<ArchitectDashboardProps> = ({
                                                     {displayedDirective || "Sincronizando con la matriz de datos..."}
                                                 </p>
                                             </div>
+
+                                            {aiDirective && !isDirectiveLoading && (
+                                                <div className="mb-4 flex items-center justify-between gap-4 rounded-2xl border border-white/5 bg-white/[0.03] px-5 py-4">
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">¿La directiva fue útil?</span>
+                                                    <div className="flex gap-2">
+                                                        <button type="button" onClick={() => onDirectiveFeedback("helpful")} aria-pressed={directiveFeedback === "helpful"} className={directiveFeedback === "helpful" ? "rounded-xl bg-emerald-500 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-black" : "rounded-xl bg-white/5 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-white"}>Sí</button>
+                                                        <button type="button" onClick={() => onDirectiveFeedback("not-helpful")} aria-pressed={directiveFeedback === "not-helpful"} className={directiveFeedback === "not-helpful" ? "rounded-xl bg-red-500 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-black" : "rounded-xl bg-white/5 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-white"}>No</button>
+                                                    </div>
+                                                </div>
+                                            )}
 
                                             <button 
                                                 onClick={onGenerateDirective}

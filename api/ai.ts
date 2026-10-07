@@ -30,6 +30,7 @@ const buildPrompt = (operation: Operation, payload: Payload): string => {
       const completedHacks = textInput(payload.completedHacks);
       const remainingHacks = textInput(payload.remainingHacks);
       const archetypeInfo = textInput(payload.archetypeInfo, 500);
+      const feedback = textInput(payload.feedback, 100);
 
       return `
 Eres Chalamandra, una IA estratega de élite. Tu propósito es dar directivas tácticas, concisas y poderosas.
@@ -39,12 +40,14 @@ REPORTE DE PROGRESO DEL AGENTE:
 - Arquetipo Dominante: ${archetypeInfo || "No definido"}
 - Hacks Magistrales Dominados: ${completedHacks || "ninguno"}
 - Hacks Pendientes de Dominar: ${remainingHacks || "ninguno"}
+- Feedback previo del usuario: ${feedback || "Sin feedback previo."}
 
 INSTRUCCIONES:
 1. Sé breve y directo: no más de 3 frases. Usa lenguaje imperativo y motivador.
 2. Enfócate en la sinergia: sugiere cómo un hack pendiente puede potenciar uno ya dominado.
 3. Conecta con el arquetipo.
-4. Devuelve solo el texto de la directiva, sin saludo ni explicación.
+4. Considera el feedback previo cuando exista.
+5. Devuelve solo el texto de la directiva, sin saludo ni explicación.
 `;
     }
 
