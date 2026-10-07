@@ -116,6 +116,11 @@ export async function POST(request: Request): Promise<Response> {
     return json({ error: "Method not allowed" }, 405);
   }
 
+  const origin = request.headers.get("origin");
+  if (origin && origin !== new URL(request.url).origin) {
+    return json({ error: "Forbidden origin" }, 403);
+  }
+
   const apiKey = process.env.GEMINI_API_KEY?.trim();
   if (!apiKey) {
     return json({ error: "AI service is not configured" }, 503);
