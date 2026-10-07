@@ -319,7 +319,7 @@ const GrimorioTacticoSection: React.FC = () => {
                                     En la Sesión Descubrimiento, calibramos tus ingredientes para forjar los combos que realmente desintegran tus limitaciones.
                                 </p>
                                 <a 
-                                    href="https://ko-fi.com/s/e85f9cd5e1"
+                                    href={PAYMENT_LINKS.discovery}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="block w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl transition-all shadow-xl"
