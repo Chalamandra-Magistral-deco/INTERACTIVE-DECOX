@@ -1,4 +1,4 @@
-type GeminiTask = 'strategic-directive' | 'post-payment-directive' | 'hook' | 'contact-confirmation' | 'alchemical-combo';
+type GeminiTask = 'strategic-directive' | 'hook' | 'contact-confirmation' | 'alchemical-combo';
 
 interface GeminiRequest {
   task: GeminiTask;
@@ -26,9 +26,6 @@ export function generateStrategicDirective(completedHacks: string, remainingHack
   return callGemini({ task: 'strategic-directive', payload: { completedHacks, remainingHacks, archetypeInfo, feedback } }, 'El Oráculo está nublado. Intenta de nuevo.');
 }
 
-export function generatePostPaymentDirective(serviceName: string, archetype: string | null): Promise<string> {
-  return callGemini({ task: 'post-payment-directive', payload: { serviceName, archetype } }, 'Tu camino ha comenzado. Prepara tu mente para la transformación.');
-}
 
 export function generarHook(power: string, domain: string): Promise<string> {
   return callGemini({ task: 'hook', payload: { power, domain } }, 'El Oráculo no está disponible. Intenta de nuevo.');

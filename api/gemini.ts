@@ -2,7 +2,6 @@ import { GoogleGenAI } from '@google/genai';
 
 type Task =
   | 'strategic-directive'
-  | 'post-payment-directive'
   | 'hook'
   | 'contact-confirmation'
   | 'alchemical-combo';
@@ -52,11 +51,6 @@ Conecta con el arquetipo.
 Toma en cuenta el feedback previo cuando exista.
 Devuelve solo la directiva, sin saludo ni explicación.`;
 
-    case 'post-payment-directive':
-      return `Eres Chalamandra, una IA de onboarding. El usuario adquirió "${field(payload, 'serviceName')}" y su arquetipo es "${field(payload, 'archetype', 'aún no definido')}".
-Genera un mensaje breve de bienvenida que reconozca la inversión, conecte el servicio con su arquetipo y entregue una micro-tarea preparatoria.
-Devuelve solo el mensaje.`;
-
     case 'hook':
       return `Eres Chalamandra, una IA estratega de élite. Combina el poder "${field(payload, 'power')}" con el dominio "${field(payload, 'domain')}".
 Crea un nombre para el Lente de Poder y una directiva táctica de 1-2 frases.
@@ -105,7 +99,6 @@ export default async function handler(req: any, res: any) {
 
     const supported: Task[] = [
       'strategic-directive',
-      'post-payment-directive',
       'hook',
       'contact-confirmation',
       'alchemical-combo',

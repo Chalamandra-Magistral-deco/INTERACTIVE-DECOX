@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { HACKS_DATA, PODERES_SHEREZADE_DATA, CERTIFICATIONS_DATA } from '@/utils/constants';
+import { HACKS_DATA, CERTIFICATIONS_DATA } from '@/utils/constants';
 import { Hack, ModalState, Archetype, PurchasedService } from '@/utils/types';
 import { generateStrategicDirective } from '@/services/geminiService';
 import { useAudio } from '@/hooks/useAudio';
@@ -48,6 +48,7 @@ const App = () => {
     const [dominantArchetype, setDominantArchetype] = useState<Archetype | null>(() => loadString('dominantArchetype') as Archetype | null);
     const [aiDirective, setAiDirective] = useState('');
     const [isDirectiveLoading, setIsDirectiveLoading] = useState(false);
+    const [directiveFeedback, setDirectiveFeedback] = useState<'helpful' | 'not-helpful' | null>(() => loadString('directiveFeedback') as 'helpful' | 'not-helpful' | null);
 
     const { startAudioContext, playSound } = useAudio();
     
@@ -79,7 +80,7 @@ const App = () => {
             const remainingHacks = HACKS_DATA.filter(h => !completedHacks.has(h.id)).map(h => h.title).join(', ') || 'ninguno';
             const archetypeInfo = dominantArchetype ? `Su arquetipo dominante es '${dominantArchetype}'.` : 'Aún no ha descubierto su arquetipo.';
 
-            const directive = await generateStrategicDirective(completedHackTitles, remainingHacks, archetypeInfo);
+            const directive = await generateStrategicDirective(completedHackTitles, remainingHacks, archetypeInfo, directiveFeedback || 'Sin feedback previo.');
             setAiDirective(directive);
             playSound('directive', 'G5', '32n');
             playSound('directive', 'D6', '32n', undefined);
@@ -117,6 +118,7 @@ const App = () => {
         setCompletedHacks(new Set());
         setEarnedCerts(new Set());
         setAiDirective('');
+        localStorage.removeItem('directiveFeedback');
         localStorage.removeItem('dominantArchetype');
         localStorage.removeItem('completedHacks');
         localStorage.removeItem('earnedCertifications');
@@ -229,6 +231,11 @@ const App = () => {
                                 aiDirective={aiDirective}
                                 isDirectiveLoading={isDirectiveLoading}
                                 purchasedServices={purchasedServices}
+                                directiveFeedback={directiveFeedback}
+                                onDirectiveFeedback={(feedback) => {
+                                    setDirectiveFeedback(feedback);
+                                    saveJson('directiveFeedback', feedback);
+                                }}
                             />
                             <PowerLensGenerator />
                         </>
