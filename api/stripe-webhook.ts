@@ -68,15 +68,28 @@ export async function POST(request: Request): Promise<Response> {
     const fulfillmentUrl = process.env.PURCHASE_EVENT_WEBHOOK_URL?.trim();
 
     if (fulfillmentUrl) {
-      await fetch(fulfillmentUrl, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          event_type: event.type,
-          session_id: event.data?.object?.id || null,
-          payment_status: event.data?.object?.payment_status || null,
-        }),
-      });
+      try {
+        const fulfillmentResponse = await fetch(fulfillmentUrl, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            event_type: event.type,
+            session_id: event.data?.object?.id || null,
+            payment_status: event.data?.object?.payment_status || null,
+          }),
+          signal: AbortSignal.timeout(3000),
+        });
+
+        if (!fulfillmentResponse.ok) {
+          return json({ error: "Downstream fulfillment failed" }, 502);
+        }
+      } catch (error) {
+        console.error(
+          "Fulfillment provider error:",
+          error instanceof Error ? error.message : "unknown",
+        );
+        return json({ error: "Downstream fulfillment failed" }, 502);
+      }
     }
   }
 
