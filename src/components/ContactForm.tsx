@@ -1,121 +1,246 @@
-import React, { useState } from 'react';
-import { generateContactConfirmation } from '@/services/geminiService';
+import React, { useState } from "react";
+import { generateContactConfirmation } from "@/services/geminiService";
 
-type FormStatus = 'idle' | 'loading' | 'success' | 'error';
+type FormStatus = "idle" | "loading" | "success" | "error";
 
 interface FormData {
-    name: string;
-    email: string;
-    phone: string;
-    objective: string;
-    service: string;
+  name: string;
+  email: string;
+  phone: string;
+  objective: string;
+  service: string;
 }
 
+const initialFormData: FormData = {
+  name: "",
+  email: "",
+  phone: "",
+  objective: "",
+  service: "Transformación Total",
+};
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const ContactForm: React.FC = () => {
-    const [formData, setFormData] = useState<FormData>({
-        name: '',
-        email: '',
-        phone: '',
-        objective: '',
-        service: 'Transformación Total'
-    });
-    const [status, setStatus] = useState<FormStatus>('idle');
-    const [message, setMessage] = useState('');
-    const [formContainerClass, setFormContainerClass] = useState('contact-form-container');
+  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [status, setStatus] = useState<FormStatus>("idle");
+  const [message, setMessage] = useState("");
+  const [formContainerClass, setFormContainerClass] =
+    useState("contact-form-container");
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
+  const handleChange = (
+    event: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ): void => {
+    const { name, value } = event.target;
+    setFormData((current) => ({ ...current, [name]: value }));
+  };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (!formData.name || !formData.email || !formData.objective) {
-            setStatus('error');
-            setMessage('Por favor, completa los campos obligatorios.');
-            return;
-        }
+  const handleSubmit = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> => {
+    event.preventDefault();
 
-        setStatus('loading');
-        setMessage('');
+    if (
+      formData.name.trim().length < 2 ||
+      !EMAIL_PATTERN.test(formData.email.trim()) ||
+      formData.objective.trim().length < 5
+    ) {
+      setStatus("error");
+      setMessage("Completa nombre, email válido y objetivo.");
+      return;
+    }
 
-        try {
-            // Simulate sending data to a server
-            await new Promise(resolve => setTimeout(resolve, 1500));
+    setStatus("loading");
+    setMessage("");
 
-            const personalizedMessage = await generateContactConfirmation(formData.objective);
-            
-            setMessage(`¡SOLICITUD RECIBIDA! ${personalizedMessage}`);
-            setStatus('success');
-            setFormData({ name: '', email: '', phone: '', objective: '', service: 'Transformación Total' });
-            
-            setFormContainerClass('contact-form-container form-pulse-animation');
-            setTimeout(() => setFormContainerClass('contact-form-container'), 1000);
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-        } catch (error) {
-            console.error("Error submitting form or calling Gemini API:", error);
-            setStatus('error');
-            setMessage('Hubo un error al procesar tu solicitud. Por favor, inténtalo de nuevo.');
-        }
-    };
+      if (!response.ok) {
+        throw new Error("Contact delivery failed");
+      }
 
+      const personalizedMessage = await generateContactConfirmation(
+        formData.objective,
+      );
 
-    return (
-        <section className="py-20 px-6 max-w-4xl mx-auto">
-             <h2 className="text-4xl font-black text-center mb-6 text-purple-400">
-                <i className="fa-solid fa-feather-pointed mr-4"></i>APLICA A TU TRANSFORMACIÓN
-            </h2>
-            <p className="text-xl text-center mb-12 text-gray-300 font-semibold italic">
-               El primer paso no se da, se invoca. Llena el formulario para iniciar tu decodificación.
-            </p>
-            <div className={formContainerClass}>
-                <form onSubmit={handleSubmit} noValidate>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        <div>
-                            <label htmlFor="name" className="block text-lg font-bold text-gray-300 mb-2">Nombre Completo *</label>
-                            <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required aria-label="Nombre Completo" />
-                        </div>
-                        <div>
-                            <label htmlFor="email" className="block text-lg font-bold text-gray-300 mb-2">Email *</label>
-                            <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required aria-label="Email" />
-                        </div>
-                    </div>
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        <div>
-                            <label htmlFor="phone" className="block text-lg font-bold text-gray-300 mb-2">Teléfono / WhatsApp (Opcional)</label>
-                            <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleChange} aria-label="Teléfono o WhatsApp" />
-                        </div>
-                        <div>
-                             <label htmlFor="service" className="block text-lg font-bold text-gray-300 mb-2">Servicio de Interés</label>
-                             <select id="service" name="service" value={formData.service} onChange={handleChange} aria-label="Servicio de Interés">
-                                 <option>Transformación Total</option>
-                                 <option>Kit Magistral</option>
-                                 <option>Sesión Descubrimiento</option>
-                             </select>
-                        </div>
-                    </div>
-                    <div className="mb-8">
-                        <label htmlFor="objective" className="block text-lg font-bold text-gray-300 mb-2">¿Cuál es tu principal objetivo o fricción actual? *</label>
-                        <textarea id="objective" name="objective" rows={5} value={formData.objective} onChange={handleChange} required aria-label="Objetivo o fricción actual"></textarea>
-                    </div>
+      setMessage(`SOLICITUD RECIBIDA. ${personalizedMessage}`);
+      setStatus("success");
+      setFormData(initialFormData);
 
-                    <button 
-                        type="submit" 
-                        disabled={status === 'loading'}
-                        className="w-full text-center bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-black py-5 px-6 rounded-xl transition-all text-xl pulse-glow disabled:opacity-70 disabled:cursor-not-allowed btn-dynamic">
-                        {status === 'loading' ? (
-                            <><i className="fa-solid fa-spinner fa-spin mr-3"></i> DECODIFICANDO...</>
-                        ) : 'INICIAR PROTOCOLO DE CONTACTO'}
-                    </button>
-                </form>
-                 {message && (
-                    <div className={`mt-6 p-4 rounded-lg text-center font-bold text-lg ${status === 'success' ? 'bg-green-900 text-green-200' : 'bg-red-900 text-red-200'}`}>
-                        {message}
-                    </div>
-                )}
+      setFormContainerClass(
+        "contact-form-container form-pulse-animation",
+      );
+      window.setTimeout(
+        () => setFormContainerClass("contact-form-container"),
+        1000,
+      );
+    } catch (error) {
+      console.error(
+        "Error submitting contact form:",
+        error instanceof Error ? error.message : "unknown",
+      );
+      setStatus("error");
+      setMessage(
+        "No pudimos entregar tu solicitud. Verifica la configuración de contacto e inténtalo de nuevo.",
+      );
+    }
+  };
+
+  return (
+    <section className="mx-auto max-w-4xl px-6 py-20">
+      <h2 className="mb-6 text-center text-4xl font-black text-purple-400">
+        <i className="fa-solid fa-feather-pointed mr-4" />
+        APLICA A TU TRANSFORMACIÓN
+      </h2>
+
+      <p className="mb-12 text-center text-xl font-semibold italic text-gray-300">
+        El primer paso no se da, se invoca. Llena el formulario para iniciar tu
+        decodificación.
+      </p>
+
+      <div className={formContainerClass}>
+        <form onSubmit={handleSubmit} noValidate>
+          <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div>
+              <label
+                htmlFor="name"
+                className="mb-2 block text-lg font-bold text-gray-300"
+              >
+                Nombre Completo *
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                maxLength={120}
+                autoComplete="name"
+                required
+                aria-label="Nombre Completo"
+              />
             </div>
-        </section>
-    );
+
+            <div>
+              <label
+                htmlFor="email"
+                className="mb-2 block text-lg font-bold text-gray-300"
+              >
+                Email *
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                maxLength={200}
+                autoComplete="email"
+                required
+                aria-label="Email"
+              />
+            </div>
+          </div>
+
+          <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div>
+              <label
+                htmlFor="phone"
+                className="mb-2 block text-lg font-bold text-gray-300"
+              >
+                Teléfono / WhatsApp (Opcional)
+              </label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                maxLength={40}
+                autoComplete="tel"
+                aria-label="Teléfono o WhatsApp"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="service"
+                className="mb-2 block text-lg font-bold text-gray-300"
+              >
+                Servicio de Interés
+              </label>
+              <select
+                id="service"
+                name="service"
+                value={formData.service}
+                onChange={handleChange}
+                aria-label="Servicio de Interés"
+              >
+                <option>Transformación Total</option>
+                <option>Kit Magistral</option>
+                <option>Sesión Descubrimiento</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <label
+              htmlFor="objective"
+              className="mb-2 block text-lg font-bold text-gray-300"
+            >
+              ¿Cuál es tu principal objetivo o fricción actual? *
+            </label>
+            <textarea
+              id="objective"
+              name="objective"
+              rows={5}
+              value={formData.objective}
+              onChange={handleChange}
+              maxLength={2000}
+              required
+              aria-label="Objetivo o fricción actual"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={status === "loading"}
+            className="btn-dynamic pulse-glow w-full rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-5 text-center text-xl font-black text-white transition-all hover:from-purple-700 hover:to-pink-700 disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            {status === "loading" ? (
+              <>
+                <i className="fa-solid fa-spinner fa-spin mr-3" />
+                ENVIANDO...
+              </>
+            ) : (
+              "INICIAR PROTOCOLO DE CONTACTO"
+            )}
+          </button>
+        </form>
+
+        {message && (
+          <div
+            role={status === "error" ? "alert" : "status"}
+            aria-live="polite"
+            className={`mt-6 rounded-lg p-4 text-center text-lg font-bold ${
+              status === "success"
+                ? "bg-green-900 text-green-200"
+                : "bg-red-900 text-red-200"
+            }`}
+          >
+            {message}
+          </div>
+        )}
+      </div>
+    </section>
+  );
 };
 
 export default ContactForm;
