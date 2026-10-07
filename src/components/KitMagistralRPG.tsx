@@ -55,7 +55,7 @@ const TwistComponent: React.FC<{twist: typeof RPG_MODULES_DATA[number]['twist']}
                                 {twist.content.map((item: string, index: number) => (
                                     <li key={index} className="flex items-start gap-2">
                                         <span className="text-white/20 mt-1">•</span>
-                                        <span ><StrongText>{item}</StrongText><span></span>
+                                        <span><StrongText>{item}</StrongText></span>
                                     </li>
                                 ))}
                             </ul>
