@@ -75,6 +75,12 @@ const ArchitectDashboard: React.FC<ArchitectDashboardProps> = ({
         }
     };
 
+    const serviceStatusLabel: Record<PurchasedService['status'], string> = {
+        pending: 'Pendiente',
+        active: 'Activo',
+        completed: 'Completado',
+    };
+
     return (
         <section id="dashboard" className="py-32 px-6 bg-black relative overflow-hidden">
             {/* Ambient Background */}
@@ -323,7 +329,7 @@ const ArchitectDashboard: React.FC<ArchitectDashboardProps> = ({
                                                     </div>
                                                     <div>
                                                         <h4 className="text-xl font-black text-white uppercase tracking-tighter">{service.type}</h4>
-                                                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Estado: {service.status}</p>
+                                                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Estado: {serviceStatusLabel[service.status]}</p>
                                                     </div>
                                                 </div>
                                                 <div className="text-right">
