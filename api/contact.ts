@@ -4,6 +4,7 @@ type ContactPayload = {
   phone?: string;
   objective: string;
   service: string;
+  website?: string;
 };
 
 const json = (body: Record<string, unknown>, status = 200): Response =>
@@ -22,6 +23,11 @@ const isValidEmail = (email: string): boolean =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 export async function POST(request: Request): Promise<Response> {
+  const origin = request.headers.get("origin");
+  if (origin && origin !== new URL(request.url).origin) {
+    return json({ error: "Forbidden origin" }, 403);
+  }
+
   const resendKey = process.env.RESEND_API_KEY?.trim();
   const destination = process.env.CONTACT_TO_EMAIL?.trim();
   const sender = process.env.CONTACT_FROM_EMAIL?.trim();
@@ -43,7 +49,12 @@ export async function POST(request: Request): Promise<Response> {
     phone: clean(body.phone, 40),
     objective: clean(body.objective, 2000),
     service: clean(body.service, 120),
+    website: clean(body.website, 200),
   };
+
+  if (contact.website) {
+    return json({ ok: true });
+  }
 
   if (
     contact.name.length < 2 ||
