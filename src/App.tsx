@@ -51,6 +51,45 @@ const App = () => {
     const [directiveFeedback, setDirectiveFeedback] = useState<'helpful' | 'not-helpful' | null>(() => loadString('directiveFeedback') as 'helpful' | 'not-helpful' | null);
 
     const { startAudioContext, playSound } = useAudio();
+    // Feedback loop: user actions update state, which can later influence the next AI directive.
+    const handleCelebration = useCallback(() => {
+        setCelebrate(true);
+        playSound('celebration', 'C4', '8n');
+        playSound('celebration', 'E4', '8n');
+        playSound('celebration', 'G4', '8n');
+        playSound('celebration', 'C5', '8n');
+        window.setTimeout(() => setCelebrate(false), 4000);
+    }, [playSound]);
+
+    const checkCertifications = useCallback((hacks: Set<number>, currentCerts: Set<number>) => {
+        const newCerts = new Set(currentCerts);
+        let earnedAny = false;
+
+        CERTIFICATIONS_DATA.forEach((cert) => {
+            if (newCerts.has(cert.id)) return;
+
+            const isEarned = cert.id === 1
+                ? hacks.size >= 3
+                : cert.requiredHacks.every((id) => hacks.has(id));
+
+            if (!isEarned) return;
+
+            newCerts.add(cert.id);
+            earnedAny = true;
+            toast.success(`¡Certificación Obtenida: ${cert.title}!`, {
+                description: cert.description,
+                icon: <i className={`${cert.icon} ${cert.color}`}></i>,
+                duration: 5000,
+            });
+        });
+
+        if (earnedAny) {
+            setEarnedCerts(newCerts);
+            saveJson('earnedCertifications', Array.from(newCerts));
+            handleCelebration();
+        }
+    }, [handleCelebration]);
+
     
     const toggleHackCompletion = useCallback((id: number) => {
         const newCompleted = new Set(completedHacks);
