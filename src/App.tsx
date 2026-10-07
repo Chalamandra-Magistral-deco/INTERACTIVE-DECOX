@@ -72,7 +72,7 @@ const App: React.FC = () => {
   );
   const [purchasedServices, setPurchasedServices] = useState<
     PurchasedService[]
-  >(() => readJSON<PurchasedService[]>("purchasedServices", []));
+  >(() => readJSON<PurchasedService[]>("verifiedPurchasedServices", []));
   const [modalState, setModalState] = useState<ModalState>({
     isOpen: false,
     type: null,
@@ -116,10 +116,10 @@ const App: React.FC = () => {
         const newService: PurchasedService = {
           type: service,
           date: new Date().toISOString(),
-          status: "pending",
+          status: "active",
         };
         const updated = [...current, newService];
-        writeJSON("purchasedServices", updated);
+        writeJSON("verifiedPurchasedServices", updated);
         return updated;
       });
 
