@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Toaster, toast } from "sonner";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import * as Tone from "tone";
 
 import { CERTIFICATIONS_DATA, HACKS_DATA } from "@/utils/constants";
@@ -378,12 +378,14 @@ const App: React.FC = () => {
 
       <Footer />
 
-      <ModalManager
+      <AnimatePresence>
+        <ModalManager
           modalState={modalState}
           hideModal={hideModal}
           showModal={showModal}
           toggleHackCompletion={toggleHackCompletion}
         />
+      </AnimatePresence>
 
       <WhatsAppFloat />
     </div>
