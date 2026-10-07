@@ -1,29 +1,29 @@
-export type Archetype = 'El Arquitecto' | 'El Alquimista' | 'El Explorador';
+export type Archetype = "El Arquitecto" | "El Alquimista" | "El Explorador";
 
 export interface AmplificacionProfunda {
   datoOculto: string;
   miAmplificacion: string;
   ejercicios: {
     titulo: string;
-    descripcion:string;
+    descripcion: string;
   }[];
 }
 
 export interface PlantillaAspecto {
-    aspecto: string;
-    guia: string;
+  aspecto: string;
+  guia: string;
 }
 
 export interface PoderDeSherezade {
-    id: number;
-    title: string;
-    icon: string;
-    clave: string;
-    proposito: string;
-    poder: string;
-    ejemploDeUso: string;
-    plantilla: PlantillaAspecto[];
-    miniReto: string;
+  id: number;
+  title: string;
+  icon: string;
+  clave: string;
+  proposito: string;
+  poder: string;
+  ejemploDeUso: string;
+  plantilla: PlantillaAspecto[];
+  miniReto: string;
 }
 
 export interface Hack {
@@ -45,14 +45,14 @@ export interface Hack {
 }
 
 export interface QuizOption {
-    text: string;
-    archetype: Archetype;
+  text: string;
+  archetype: Archetype;
 }
 
 export interface QuizQuestion {
-    id: number;
-    text: string;
-    options: QuizOption[];
+  id: number;
+  text: string;
+  options: QuizOption[];
 }
 
 export interface Certification {
@@ -65,16 +65,31 @@ export interface Certification {
   srap: string;
 }
 
-export type ServiceType = 'discovery' | 'magistral';
+export type ServiceType = "discovery" | "magistral";
+
+export interface PostPaymentData {
+  serviceName: ServiceType;
+  archetype: Archetype | null;
+}
+
+export type ModalType =
+  | "hack"
+  | "srap"
+  | "discovery"
+  | "magistral"
+  | "postPayment"
+  | "activation";
+
+export type ModalData = Hack | PostPaymentData | null;
 
 export interface ModalState {
   isOpen: boolean;
-  type: 'hack' | 'srap' | 'discovery' | 'magistral' | 'postPayment' | 'activation' | null;
-  data?: any;
+  type: ModalType | null;
+  data: ModalData;
 }
 
 export interface PurchasedService {
-    type: ServiceType;
-    date: string;
-    status: 'pending' | 'active' | 'completed';
+  type: ServiceType;
+  date: string;
+  status: "pending" | "active" | "completed";
 }
