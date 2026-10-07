@@ -315,22 +315,20 @@ const ArchitectDashboard: React.FC<ArchitectDashboardProps> = ({
                                     className="space-y-4"
                                 >
                                     {purchasedServices.length > 0 ? (
-                                        purchasedServices.map((service, idx) => (
-                                            <div key={idx} className="p-8 rounded-[2.5rem] bg-white/5 border border-white/10 flex items-center justify-between group hover:bg-white/[0.07] transition-all">
+                                        purchasedServices.map((service) => (
+                                            <div key={`${service.type}-${service.date}`} className="p-8 rounded-[2.5rem] bg-white/5 border border-white/10 flex items-center justify-between group hover:bg-white/[0.07] transition-all">
                                                 <div className="flex items-center gap-6">
                                                     <div className="w-16 h-16 rounded-2xl bg-black/40 flex items-center justify-center text-3xl">
                                                         <i className={`fa-solid ${getServiceIcon(service.type)}`}></i>
                                                     </div>
                                                     <div>
                                                         <h4 className="text-xl font-black text-white uppercase tracking-tighter">{service.type}</h4>
-                                                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Estado: Operativo</p>
+                                                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Estado: {service.status}</p>
                                                     </div>
                                                 </div>
                                                 <div className="text-right">
                                                     <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-2">Adquirido {new Date(service.date).toLocaleDateString()}</p>
-                                                    <button className="px-6 py-2 bg-white/5 hover:bg-white/10 text-white text-[10px] font-black rounded-xl border border-white/10 transition-all uppercase tracking-widest">
-                                                        Acceder
-                                                    </button>
+
                                                 </div>
                                             </div>
                                         ))
