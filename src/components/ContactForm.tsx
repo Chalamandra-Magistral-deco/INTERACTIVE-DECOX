@@ -9,6 +9,7 @@ interface FormData {
   phone: string;
   objective: string;
   service: string;
+  website: string;
 }
 
 const initialFormData: FormData = {
@@ -17,6 +18,7 @@ const initialFormData: FormData = {
   phone: "",
   objective: "",
   service: "Transformación Total",
+  website: "",
 };
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -107,6 +109,16 @@ const ContactForm: React.FC = () => {
 
       <div className={formContainerClass}>
         <form onSubmit={handleSubmit} noValidate>
+          <input
+            type="text"
+            name="website"
+            value={formData.website}
+            onChange={handleChange}
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+            className="absolute -left-[9999px] h-px w-px opacity-0"
+          />
           <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
               <label
