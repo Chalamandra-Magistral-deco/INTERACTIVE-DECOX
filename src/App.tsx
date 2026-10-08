@@ -182,7 +182,7 @@ const App: React.FC = () => {
     [handleCelebration],
   );
 
-  const toggleHackCompletion = useCallback(
+  const markHackCompleted = useCallback(
     (id: number) => {
       if (!HACKS_DATA.some((hack) => hack.id === id)) return;
 
