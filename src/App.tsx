@@ -246,6 +246,7 @@ const App: React.FC = () => {
   }, [
     completedHacks,
     dominantArchetype,
+    directiveFeedback,
     isDirectiveLoading,
     playSound,
   ]);
