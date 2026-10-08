@@ -1,4 +1,6 @@
-import { enforceRateLimit, enforceSameOrigin, readJsonBody } from "../src/server/requestSecurity";\n\ntype ContactPayload = {
+import { enforceRateLimit, enforceSameOrigin, readJsonBody } from "../src/server/requestSecurity";
+
+type ContactPayload = {
   name: string;
   email: string;
   phone?: string;
