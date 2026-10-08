@@ -1,4 +1,8 @@
-import { enforceRateLimit, enforceSameOrigin, readJsonBody } from "../src/server/requestSecurity";
+import {
+  enforceRateLimit,
+  enforceSameOrigin,
+  readJsonBody,
+} from "../src/server/requestSecurity";
 
 type ContactPayload = {
   name: string;
@@ -28,7 +32,12 @@ export async function POST(request: Request): Promise<Response> {
   const originError = enforceSameOrigin(request);
   if (originError) return originError;
 
-  const rateLimitError = enforceRateLimit(request, "contact", 3, 10 * 60_000);
+  const rateLimitError = enforceRateLimit(
+    request,
+    "contact",
+    3,
+    10 * 60_000,
+  );
   if (rateLimitError) return rateLimitError;
 
   const resendKey = process.env.RESEND_API_KEY?.trim();
@@ -39,7 +48,10 @@ export async function POST(request: Request): Promise<Response> {
     return json({ error: "Contact delivery is not configured" }, 503);
   }
 
-  const parsedBody = await readJsonBody<Partial<ContactPayload>>(request, 16_384);
+  const parsedBody = await readJsonBody<Partial<ContactPayload>>(
+    request,
+    16_384,
+  );
   if ("error" in parsedBody) return parsedBody.error;
   const body = parsedBody.data;
 
@@ -73,8 +85,7 @@ export async function POST(request: Request): Promise<Response> {
     "",
     "Objetivo / fricción:",
     contact.objective,
-  ].join("
-");
+  ].join("\n");
 
   try {
     const response = await fetch("https://api.resend.com/emails", {
@@ -98,7 +109,10 @@ export async function POST(request: Request): Promise<Response> {
 
     return json({ ok: true });
   } catch (error) {
-    console.error("Contact provider error:", error instanceof Error ? error.message : "unknown");
+    console.error(
+      "Contact provider error:",
+      error instanceof Error ? error.message : "unknown",
+    );
     return json({ error: "Contact delivery failed" }, 502);
   }
 }
