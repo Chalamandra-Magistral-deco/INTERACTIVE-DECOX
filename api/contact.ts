@@ -73,7 +73,8 @@ export async function POST(request: Request): Promise<Response> {
     "",
     "Objetivo / fricción:",
     contact.objective,
-  ].join("\n");
+  ].join("
+");
 
   try {
     const response = await fetch("https://api.resend.com/emails", {
