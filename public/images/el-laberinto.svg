@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+<title id="title">Laberinto estratégico</title>
+<desc id="desc">Un recorrido visual desde ruido y fricción hasta claridad y dirección.</desc>
+<defs><linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#050506"/><stop offset=".55" stop-color="#111827"/><stop offset="1" stop-color="#10261d"/></linearGradient></defs>
+<rect width="1200" height="700" rx="36" fill="url(#bg)"/>
+<text x="80" y="105" fill="#6b7280" font-family="Arial,sans-serif" font-size="24" font-weight="800">RUIDO</text>
+<text x="1115" y="105" fill="#6ee7b7" font-family="Arial,sans-serif" font-size="24" font-weight="800" text-anchor="end">CLARIDAD</text>
+<g fill="none" stroke="#374151" stroke-width="26" stroke-linecap="round" stroke-linejoin="round">
+<path d="M120 180H330V300H180V490H420V560H680V420H560V220H840V330H1030V500H900V590H1060"/>
+<path d="M120 590H260V430H360V220H490"/>
+<path d="M710 560V630H940"/>
+</g>
+<path d="M120 180H330V300H180V490H420V560H680V420H560V220H840V330H1030V500H900V590H1060" fill="none" stroke="#22d3ee" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="120" cy="180" r="22" fill="#ef4444"/>
+<circle cx="1060" cy="590" r="22" fill="#22c55e"/>
+<text x="120" y="653" fill="#fca5a5" font-family="Arial,sans-serif" font-size="20" text-anchor="middle">FRICCIÓN</text>
+<text x="1060" y="653" fill="#86efac" font-family="Arial,sans-serif" font-size="20" text-anchor="middle">DIRECCIÓN</text>
+</svg>

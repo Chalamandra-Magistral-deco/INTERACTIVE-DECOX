@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@google/genai": "^1.28.0",
+    "@supabase/supabase-js": "2.117.3",
     "@vercel/analytics": "^2.0.1",
     "motion": "^12.34.5",
     "react": "^18.2.0",
@@ -37,5 +38,10 @@
     "vitest": "^1.6.0"
   },
   "author": "Chalamandra Magistral",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "overrides": {
+    "protobufjs": "^7.6.6",
+    "@protobufjs/utf8": "^1.1.2",
+    "ws": "^8.22.0"
+  }
 }
