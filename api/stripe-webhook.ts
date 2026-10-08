@@ -49,6 +49,7 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   let event: {
+    id?: string;
     type?: string;
     data?: { object?: { id?: string; payment_status?: string } };
   };
@@ -59,7 +60,11 @@ export async function POST(request: Request): Promise<Response> {
     return json({ error: "Invalid webhook JSON" }, 400);
   }
 
-  if (!event.id) {\n    return json({ error: "Missing Stripe event id" }, 400);\n  }\n\n  const supported = new Set([
+  if (!event.id) {
+    return json({ error: "Missing Stripe event id" }, 400);
+  }
+
+  const supported = new Set([
     "checkout.session.completed",
     "checkout.session.async_payment_succeeded",
   ]);
@@ -71,8 +76,12 @@ export async function POST(request: Request): Promise<Response> {
       try {
         const fulfillmentResponse = await fetch(fulfillmentUrl, {
           method: "POST",
-          headers: {\n            "content-type": "application/json",\n            "idempotency-key": event.id,\n          },
+          headers: {
+            "content-type": "application/json",
+            "idempotency-key": event.id,
+          },
           body: JSON.stringify({
+            event_id: event.id,
             event_type: event.type,
             session_id: event.data?.object?.id || null,
             payment_status: event.data?.object?.payment_status || null,
