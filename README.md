@@ -1,55 +1,125 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# INTERACTIVE-DECOX // Chalamandra Magistral
 
-# SISTEMA DE INGENIERÍA DE IDENTIDAD [SII]
+Aplicación React + Vite para diagnóstico de arquetipos, dominio de Hacks Magistrales, directivas generativas y flujo de compra.
 
-Este no es un repositorio de código. Es el arsenal de un arquitecto de la realidad. Lo que tienes aquí es la infraestructura para un gimnasio mental de alto rendimiento, diseñado para deconstruir, rediseñar y desplegar versiones superiores de tu propia identidad.
+## Arquitectura
 
-La plataforma opera bajo un principio clave: **la identidad no es fija, es un stack tecnológico que puede y debe ser optimizado.**
-
-Visualiza tu app en AI Studio: https://ai.studio/apps/ec6bddae-acb7-468d-a051-551452e33e91
-
----
-
-## // PROTOCOLO DE OPERACIONES LOCALES
-
-### **1. REQUISITOS DEL TERRENO**
-
-*   **Node.js:** Versión 18.x o superior.
-*   **npm:** El gestor de paquetes estándar. Viene con Node.js.
-
-### **2. LEVANTAMIENTO DEL SISTEMA**
-
-El proceso es limpio y directo. Abre tu terminal.
-
-**Instalación de dependencias (El Armado):**
-Clona el repositorio y ejecuta. Esto instala el concreto, el acero y los sistemas de cableado.
-
-```bash
-npm install
+```
+src/
+├── components/      # UI y experiencias
+├── config/          # configuración pública Vite
+├── hooks/           # ciclos de vida reutilizables (audio)
+├── services/        # frontera cliente -> API
+└── utils/           # catálogo y tipos de dominio
+api/
+├── ai.ts            # Gemini server-side
+├── contact.ts       # entrega de formularios
+├── verify-payment.ts # verificación de Checkout Session
+└── stripe-webhook.ts # entrada firmada de Stripe
 ```
 
-**Ejecución en modo desarrollo (La Simulación):**
-Activa el entorno de simulación local. El sistema correrá en un puerto local, con recarga en caliente para modificaciones tácticas en tiempo real.
+El navegador nunca recibe secretos de Gemini, Stripe o Resend. Los valores `VITE_*` son únicamente configuración pública.
+
+## Desarrollo
+
+Requisitos: Node.js 20+ y npm.
 
 ```bash
+npm ci
 npm run dev
 ```
 
-### **3. ARQUITECTURA DEL SISTEMA (PLANO URBANO)**
+Validación:
 
-El sistema está diseñado en módulos, como una ciudad lógica.
+```bash
+npm run lint
+npm run test -- --run
+npm run build
+```
 
-*   `"/components"`: **Los Distritos.** Cada componente es un edificio funcional: el `ArchetypeQuiz` (Aduana), el `ArchitectDashboard` (Centro de Mando), los `Hack...Module` (Dojos de Entrenamiento).
-*   `"/services"`: **Las Torres de Control.** Aquí reside el `geminiService.ts`, el Oráculo de IA que procesa el progreso del agente y emite directivas estratégicas.
-*   `"/utils"`: **El Grimorio Técnico.** Contiene `constants.ts`, el ADN conceptual del sistema. Aquí se definen las físicas del universo: los arquetipos, los poderes, las leyes.
-*   `"App.tsx"` y `"index.tsx"`: **El Núcleo Urbano.** El punto de entrada y el distribuidor principal de flujos de la ciudad.
+## Variables de entorno
 
----
+Copia `.env.example` a tu entorno de desarrollo o configura las variables en la plataforma de despliegue.
 
-## // FILOSOFÍA DE DISEÑO: CALLE TÉCNICA SUPREMA
+### Server-only
 
-Este sistema fue construido para ser un arma. Su propósito es darte las herramientas para ejecutar la maniobra más difícil: la auto-superación consciente y estratégica. Cada "hack" es una técnica. Cada "directiva" es una orden de operaciones. Tu progreso no se mide en "experiencia", se mide en "dominio".
+- `GEMINI_API_KEY`
+- `GEMINI_MODEL`
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+- `STRIPE_DISCOVERY_PRICE_ID`
+- `STRIPE_MAGISTRAL_PRICE_ID`
+- `RESEND_API_KEY`
+- `CONTACT_TO_EMAIL`
+- `CONTACT_FROM_EMAIL`
 
-**Actúa en consecuencia.**
+### Públicas
+
+- `VITE_STRIPE_DISCOVERY_URL`
+- `VITE_STRIPE_MAGISTRAL_URL`
+- `VITE_WHATSAPP_NUMBER`
+- `VITE_WHATSAPP_MESSAGE`
+
+## Flujo de pago
+
+```
+Usuario
+  │
+  ▼
+Payment Link de Stripe
+  │
+  ├──► checkout.session.completed
+  │        │
+  │        ▼
+  │   /api/stripe-webhook
+  │        │
+  │        ▼
+  │   Fulfillment / CRM
+  │
+  └──► success?session_id={CHECKOUT_SESSION_ID}
+           │
+           ▼
+     /api/verify-payment
+           │
+           ▼
+       UI verificada
+```
+
+La interfaz nunca considera una compra válida por una simple bandera de URL.
+
+## Feedback loop
+
+```
+Interacción del agente
+      │
+      ├──► progreso local
+      │       │
+      │       ▼
+      │   directiva IA
+      │       │
+      │       ▼
+      └──► siguiente acción
+
+Pago Stripe
+      │
+      ▼
+verificación server-side
+      │
+      ▼
+estado adquirido
+      │
+      ▼
+siguiente acción operativa
+```
+
+El progreso de hacks permanece como estado de experiencia en el navegador. No debe usarse como mecanismo de autorización de contenido premium.
+
+## Producción
+
+Antes de activar ventas, deben existir los dos productos/precios correctos en Stripe y sus respectivos Payment Links. El Payment Link de 99 MXN asociado a “Mapa Tricéntrico” detectado en la cuenta no debe reutilizarse para los servicios de $27/$397 USD.
+
+Configura además el webhook de Stripe apuntando a:
+
+`/api/stripe-webhook`
+
+y usa una URL de fulfillment duradera si existe un sistema externo que deba registrar o provisionar las compras.

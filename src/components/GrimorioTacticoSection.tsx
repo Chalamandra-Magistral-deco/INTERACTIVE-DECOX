@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { PODERES_SHEREZADE_DATA } from '@/utils/constants';
+import { PAYMENT_LINKS } from '@/config/public';
 import { generateAlchemicalCombo } from '@/services/geminiService';
 import { motion, AnimatePresence } from 'motion/react';
+import StrongText from '@/components/StrongText';
 
 const GRIMORIO_INPUTS_KEY = 'grimorioTemplateInputs';
 const COMBO_INPUTS_KEY = 'grimorioComboInputs';
@@ -192,7 +194,7 @@ const GrimorioTacticoSection: React.FC = () => {
                                                     <p className="text-gray-400 leading-relaxed text-lg italic">"{poder.poder}"</p>
                                                     <div className="p-6 bg-black/40 rounded-3xl border border-white/5">
                                                         <span className="text-[10px] font-black text-yellow-500 uppercase tracking-widest block mb-2">Protocolo de Uso:</span>
-                                                        <p className="text-white text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: poder.ejemploDeUso }}></p>
+                                                        <p className="text-white text-sm leading-relaxed"><StrongText>{poder.ejemploDeUso}</StrongText></p>
                                                     </div>
                                                 </div>
 
@@ -319,7 +321,7 @@ const GrimorioTacticoSection: React.FC = () => {
                                     En la Sesión Descubrimiento, calibramos tus ingredientes para forjar los combos que realmente desintegran tus limitaciones.
                                 </p>
                                 <a 
-                                    href="https://ko-fi.com/s/e85f9cd5e1"
+                                    href={PAYMENT_LINKS.discovery}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="block w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl transition-all shadow-xl"

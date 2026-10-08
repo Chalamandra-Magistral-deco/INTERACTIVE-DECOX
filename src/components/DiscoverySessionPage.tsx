@@ -1,117 +1,165 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
+import { PAYMENT_LINKS } from "@/config/public";
 
 const DiscoverySessionPage: React.FC = () => {
-    const componentRef = useRef<HTMLDivElement>(null);
+  const componentRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        const observerOptions = {
-            root: document.querySelector('.modal-content'),
-            rootMargin: '0px',
-            threshold: 0.1
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-
-        const elementsToReveal = componentRef.current?.querySelectorAll('.reveal-on-scroll');
-        if (elementsToReveal) {
-            elementsToReveal.forEach(el => observer.observe(el));
-        }
-        
-        return () => {
-            if (elementsToReveal) {
-                elementsToReveal.forEach(el => observer.unobserve(el));
-            }
-        };
-    }, []);
-
-    return (
-        <div ref={componentRef} className="space-y-16 pb-12">
-            {/* Hero Section */}
-            <div className="text-center space-y-6">
-                <h2 className="text-4xl md:text-6xl font-black text-yellow-300 tracking-tighter reveal-on-scroll">
-                    KIT DE AUTO-DECODIFICACIÓN
-                </h2>
-                <p className="text-2xl md:text-3xl font-bold text-white max-w-3xl mx-auto leading-tight reveal-on-scroll" style={{ transitionDelay: '0.2s' }}>
-                    Desmantela tu inercia y activa tu <span className="text-green-400">Ventaja Injusta</span> con las herramientas para entender tu Sistema Operativo.
-                </p>
-            </div>
-
-            {/* The Problem Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center reveal-on-scroll">
-                <div className="space-y-4">
-                    <h3 className="text-2xl font-black text-red-400 uppercase tracking-widest">El Síntoma:</h3>
-                    <p className="text-lg text-gray-300 leading-relaxed">
-                        Sientes que estás operando al 20% de tu capacidad. Tienes las herramientas, pero el "Sistema Operativo" de tu mente está desactualizado, lleno de bugs cognitivos y patrones de autosabotaje que no puedes ver.
-                    </p>
-                </div>
-                <div className="bg-red-500/10 border border-red-500/20 p-6 rounded-2xl italic text-red-200">
-                    "La mayoría de las personas no fracasan por falta de talento, sino por operar bajo un mapa de la realidad que ya no existe."
-                </div>
-            </div>
-
-            {/* The Methodology Section */}
-            <div className="space-y-8">
-                <h3 className="text-3xl font-black text-center text-white reveal-on-scroll">LA METODOLOGÍA DEL KIT</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                    {[
-                        { title: 'DIAGNÓSTICO', icon: 'fa-magnifying-glass-chart', desc: 'Aprende a escanear tus sesgos cognitivos y detecta tu arquetipo dominante.' },
-                        { title: 'DECODIFICACIÓN', icon: 'fa-code-branch', desc: 'Recibe las herramientas para identificar el "código muerto" en tu toma de decisiones.' },
-                        { title: 'ACTIVACIÓN', icon: 'fa-bolt-lightning', desc: 'Descubre tu primer Hack Magistral para obtener resultados tangibles.' }
-                    ].map((step, i) => (
-                        <div key={i} className="bg-gray-800/50 p-6 rounded-2xl border border-gray-700 text-center reveal-on-scroll" style={{ transitionDelay: `${i * 0.2}s` }}>
-                            <div className="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center text-2xl text-yellow-400 mx-auto mb-4">
-                                <i className={`fa-solid ${step.icon}`}></i>
-                            </div>
-                            <h4 className="font-black text-white mb-2">{step.title}</h4>
-                            <p className="text-sm text-gray-400">{step.desc}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* What you get Section */}
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-3xl border border-gray-700 shadow-2xl reveal-on-scroll">
-                <h4 className="text-2xl font-black text-green-400 mb-8 flex items-center">
-                    <i className="fa-solid fa-box-open mr-4"></i> CONTENIDO DEL KIT:
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {[
-                        { t: 'Manual de Arquetipos (PDF)', d: 'Un reporte detallado con tus fortalezas y sombras cognitivas.' },
-                        { t: 'Guía de Autodiagnóstico Táctico', d: 'Un workbook para identificar tus 3 hacks prioritarios.' },
-                        { t: 'Audio-Guía de Decodificación', d: 'Una guía en audio para entender los principios clave.' },
-                        { t: 'Protocolo de Activación Inicial', d: 'Tu primer hack, explicado paso a paso para implementación inmediata.' }
-                    ].map((item, i) => (
-                        <div key={i} className="flex items-start space-x-4 p-4 bg-black/20 rounded-xl">
-                            <i className="fa-solid fa-circle-check text-green-500 mt-1"></i>
-                            <div>
-                                <h5 className="font-bold text-white">{item.t}</h5>
-                                <p className="text-sm text-gray-400">{item.d}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* CTA */}
-            <div className="space-y-8 text-center reveal-on-scroll">
-                <div>
-                    <p className="text-sm text-gray-500 uppercase tracking-widest mb-4">Inversión en tu Evolución</p>
-                    <p className="text-6xl font-black text-white mb-6">$27 <span className="text-xl text-gray-400">USD</span></p>
-                    <a href="https://ko-fi.com/s/e85f9cd5e1" target="_blank" rel="noopener noreferrer" className="inline-block px-12 py-5 bg-yellow-500 text-black font-black rounded-2xl text-xl shadow-[0_0_50px_rgba(234,179,8,0.3)] hover:scale-105 transition-all pulse-glow">
-                        OBTENER MI KIT AHORA
-                    </a>
-                    <p className="text-xs text-gray-500 mt-6">Acceso inmediato y de por vida.</p>
-                </div>
-            </div>
-        </div>
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.1 },
     );
+
+    const elements = componentRef.current?.querySelectorAll(".reveal-on-scroll");
+    elements?.forEach((element) => observer.observe(element));
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={componentRef} className="space-y-16 pb-12">
+      <div className="space-y-6 text-center">
+        <h2 className="reveal-on-scroll text-4xl font-black tracking-tighter text-yellow-300 md:text-6xl">
+          KIT DE AUTO-DECODIFICACIÓN
+        </h2>
+        <p className="reveal-on-scroll mx-auto max-w-3xl text-2xl font-bold leading-tight text-white md:text-3xl">
+          Desmantela tu inercia y activa tu{" "}
+          <span className="text-green-400">Ventaja Injusta</span> con las
+          herramientas para entender tu Sistema Operativo.
+        </p>
+      </div>
+
+      <div className="reveal-on-scroll grid grid-cols-1 items-center gap-8 md:grid-cols-2">
+        <div className="space-y-4">
+          <h3 className="text-2xl font-black uppercase tracking-widest text-red-400">
+            El Síntoma:
+          </h3>
+          <p className="text-lg leading-relaxed text-gray-300">
+            Sientes que estás operando al 20% de tu capacidad. Tienes las
+            herramientas, pero tu "Sistema Operativo" está lleno de patrones
+            que no puedes ver con claridad.
+          </p>
+        </div>
+        <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-6 italic text-red-200">
+          "La mayoría de las personas no fracasan por falta de talento, sino
+          por operar bajo un mapa de la realidad que ya no existe."
+        </div>
+      </div>
+
+      <div className="space-y-8">
+        <h3 className="reveal-on-scroll text-center text-3xl font-black text-white">
+          LA METODOLOGÍA DEL KIT
+        </h3>
+
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+          {[
+            {
+              title: "DIAGNÓSTICO",
+              icon: "fa-magnifying-glass-chart",
+              desc: "Escanea sesgos y detecta tu arquetipo dominante.",
+            },
+            {
+              title: "DECODIFICACIÓN",
+              icon: "fa-code-branch",
+              desc: "Identifica el código muerto en tu toma de decisiones.",
+            },
+            {
+              title: "ACTIVACIÓN",
+              icon: "fa-bolt-lightning",
+              desc: "Selecciona tu primer Hack Magistral para ejecución inmediata.",
+            },
+          ].map((step, index) => (
+            <div
+              key={step.title}
+              className="reveal-on-scroll rounded-2xl border border-gray-700 bg-gray-800/50 p-6 text-center"
+              style={{ transitionDelay: `${index * 0.2}s` }}
+            >
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-yellow-500/20 text-2xl text-yellow-400">
+                <i className={`fa-solid ${step.icon}`} />
+              </div>
+              <h4 className="mb-2 font-black text-white">{step.title}</h4>
+              <p className="text-sm text-gray-400">{step.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="reveal-on-scroll rounded-3xl border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-8 shadow-2xl">
+        <h4 className="mb-8 flex items-center text-2xl font-black text-green-400">
+          <i className="fa-solid fa-box-open mr-4" />
+          CONTENIDO DEL KIT:
+        </h4>
+
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          {[
+            {
+              title: "Manual de Arquetipos (PDF)",
+              desc: "Reporte con fortalezas y sombras cognitivas.",
+            },
+            {
+              title: "Guía de Autodiagnóstico Táctico",
+              desc: "Workbook para identificar tus 3 hacks prioritarios.",
+            },
+            {
+              title: "Audio-Guía de Decodificación",
+              desc: "Guía en audio para entender los principios clave.",
+            },
+            {
+              title: "Protocolo de Activación Inicial",
+              desc: "Tu primer hack explicado paso a paso.",
+            },
+          ].map((item) => (
+            <div
+              key={item.title}
+              className="flex items-start space-x-4 rounded-xl bg-black/20 p-4"
+            >
+              <i className="fa-solid fa-circle-check mt-1 text-green-500" />
+              <div>
+                <h5 className="font-bold text-white">{item.title}</h5>
+                <p className="text-sm text-gray-400">{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="reveal-on-scroll space-y-8 text-center">
+        <div>
+          <p className="mb-4 text-sm uppercase tracking-widest text-gray-500">
+            Inversión
+          </p>
+          <p className="mb-6 text-6xl font-black text-white">
+            $27 <span className="text-xl text-gray-400">USD</span>
+          </p>
+
+          {PAYMENT_LINKS.discovery ? (
+            <a
+              href={PAYMENT_LINKS.discovery}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="pulse-glow inline-block rounded-2xl bg-yellow-500 px-12 py-5 text-xl font-black text-black shadow-[0_0_50px_rgba(234,179,8,0.3)] transition-all hover:scale-105"
+            >
+              OBTENER ACCESO AHORA
+            </a>
+          ) : (
+            <span className="inline-block cursor-not-allowed rounded-2xl bg-yellow-500 px-12 py-5 text-xl font-black text-black opacity-40">
+              CHECKOUT PENDIENTE DE CONFIGURACIÓN
+            </span>
+          )}
+
+          <p className="mt-6 text-xs text-gray-500">
+            El acceso y/o agenda se habilita mediante el checkout configurado.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default DiscoverySessionPage;

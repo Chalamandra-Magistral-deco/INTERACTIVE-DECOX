@@ -1,20 +1,21 @@
-import React from 'react';
+import React from "react";
+import { getWhatsAppUrl } from "@/config/public";
 
-const WhatsAppFloat = () => {
-    const number = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
-    const message = process.env.NEXT_PUBLIC_WHATSAPP_ENCODED_MESSAGE;
+const WhatsAppFloat: React.FC = () => {
+  const url = getWhatsAppUrl();
+  if (!url) return null;
 
-    return (
-        <a 
-           href={`https://wa.me/${number}?text=${message}`}
-           target="_blank"
-           rel="noopener noreferrer"
-           className="whatsapp-float"
-           aria-label="Contactar por WhatsApp"
-        >
-           <i className="fa-brands fa-whatsapp"></i>
-        </a>
-    );
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="whatsapp-float"
+      aria-label="Contactar por WhatsApp"
+    >
+      <i className="fa-brands fa-whatsapp" />
+    </a>
+  );
 };
 
 export default WhatsAppFloat;
