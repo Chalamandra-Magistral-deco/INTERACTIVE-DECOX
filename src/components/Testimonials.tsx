@@ -1,5 +1,3 @@
-import React from 'react';
-
 const testimonialsData = [
     {
         quote: "Chalamandra no me dio respuestas, me dio un nuevo sistema para generarlas. Pasé de reaccionar a mi negocio a diseñarlo.",

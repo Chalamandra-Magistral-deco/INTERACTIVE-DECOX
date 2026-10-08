@@ -42,7 +42,6 @@ const ArchitectDashboard: React.FC<ArchitectDashboardProps> = ({
 
     const currentLevel = levels.find(l => completedCount >= l.min && completedCount <= l.max) || levels[0];
     const nextLevel = levels[levels.indexOf(currentLevel) + 1];
-    const progressToNext = nextLevel ? ((completedCount - currentLevel.min) / (nextLevel.min - currentLevel.min)) * 100 : 100;
 
     const securityStatusMap = [
         { level: 'Sistema Vulnerable', icon: 'fa-shield-virus', color: 'text-red-500' },

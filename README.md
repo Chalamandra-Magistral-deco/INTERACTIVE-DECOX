@@ -10,6 +10,7 @@ src/
 ├── config/          # configuración pública Vite
 ├── hooks/           # ciclos de vida reutilizables (audio)
 ├── services/        # frontera cliente -> API
+├── oauth/           # consentimiento OAuth de Supabase
 └── utils/           # catálogo y tipos de dominio
 api/
 ├── ai.ts            # Gemini server-side
@@ -32,6 +33,7 @@ npm run dev
 Validación:
 
 ```bash
+npm run typecheck
 npm run lint
 npm run test -- --run
 npm run build
@@ -49,6 +51,7 @@ Copia `.env.example` a tu entorno de desarrollo o configura las variables en la 
 - `STRIPE_WEBHOOK_SECRET`
 - `STRIPE_DISCOVERY_PRICE_ID`
 - `STRIPE_MAGISTRAL_PRICE_ID`
+- `PURCHASE_EVENT_WEBHOOK_URL` (opcional; fulfillment externo)
 - `RESEND_API_KEY`
 - `CONTACT_TO_EMAIL`
 - `CONTACT_FROM_EMAIL`
@@ -59,6 +62,12 @@ Copia `.env.example` a tu entorno de desarrollo o configura las variables en la 
 - `VITE_STRIPE_MAGISTRAL_URL`
 - `VITE_WHATSAPP_NUMBER`
 - `VITE_WHATSAPP_MESSAGE`
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_PUBLISHABLE_KEY`
+
+La ruta `/oauth/consent` se usa como pantalla de autorización del servidor OAuth
+de Supabase. Configura esas dos variables públicas junto con la URL autorizada
+en Supabase; si no se configuran, el resto de la aplicación sigue funcionando.
 
 ## Flujo de pago
 
@@ -123,3 +132,21 @@ Configura además el webhook de Stripe apuntando a:
 `/api/stripe-webhook`
 
 y usa una URL de fulfillment duradera si existe un sistema externo que deba registrar o provisionar las compras.
+
+### Imágenes pendientes de recuperar
+
+La interfaz referencia estos recursos, pero no están en el árbol del proyecto ni
+en las ramas disponibles. No se sustituyeron para conservar el diseño:
+
+- `public/images/arquetipos-jugo.jpg`
+- `public/images/el-laberinto.jpg`
+- `public/images/el-algoritmo.jpg`
+
+Configura las variables de `.env.example` en el proyecto de Vercel y despliega
+con:
+
+```bash
+npm ci
+npm run build
+npx vercel --prod
+```
