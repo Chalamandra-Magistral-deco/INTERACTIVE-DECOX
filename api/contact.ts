@@ -23,10 +23,11 @@ const isValidEmail = (email: string): boolean =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 export async function POST(request: Request): Promise<Response> {
-  const origin = request.headers.get("origin");
-  if (origin && origin !== new URL(request.url).origin) {
-    return json({ error: "Forbidden origin" }, 403);
-  }
+  const originError = enforceSameOrigin(request);
+  if (originError) return originError;
+
+  const rateLimitError = enforceRateLimit(request, "contact", 3, 10 * 60_000);
+  if (rateLimitError) return rateLimitError;
 
   const resendKey = process.env.RESEND_API_KEY?.trim();
   const destination = process.env.CONTACT_TO_EMAIL?.trim();
@@ -36,12 +37,9 @@ export async function POST(request: Request): Promise<Response> {
     return json({ error: "Contact delivery is not configured" }, 503);
   }
 
-  let body: Partial<ContactPayload>;
-  try {
-    body = await request.json();
-  } catch {
-    return json({ error: "Invalid JSON body" }, 400);
-  }
+  const parsedBody = await readJsonBody<Partial<ContactPayload>>(request, 16_384);
+  if ("error" in parsedBody) return parsedBody.error;
+  const body = parsedBody.data;
 
   const contact = {
     name: clean(body.name, 120),
