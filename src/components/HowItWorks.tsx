@@ -5,7 +5,7 @@ const HowItWorks = () => {
         <section className="py-20 px-6 bg-gray-900">
             <div className="max-w-6xl mx-auto">
                 <img 
-                    src="/images/el-algoritmo.jpg" 
+                    src="/images/el-algoritmo.svg" 
                     alt="El Algoritmo: De la visión a la ejecución" 
                     className="mx-auto mb-16 w-full max-w-2xl rounded-lg shadow-2xl"
                 />
