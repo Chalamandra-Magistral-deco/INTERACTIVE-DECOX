@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+<title id="title">Mapa visual de arquetipos cognitivos</title>
+<desc id="desc">Cuatro nodos conectados alrededor de un núcleo estratégico.</desc>
+<defs><linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#07070a"/><stop offset=".55" stop-color="#171226"/><stop offset="1" stop-color="#28103b"/></linearGradient><filter id="g"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+<rect width="1200" height="700" rx="36" fill="url(#bg)"/>
+<g fill="none" stroke="#8b5cf6" stroke-opacity=".35" stroke-width="4"><path d="M600 350 210 170M600 350 990 170M600 350 210 530M600 350 990 530"/></g>
+<circle cx="600" cy="350" r="120" fill="#0b0b12" stroke="#facc15" stroke-width="5" filter="url(#g)"/>
+<text x="600" y="338" fill="#fff" font-family="Arial,sans-serif" font-size="38" font-weight="900" text-anchor="middle">NÚCLEO</text>
+<text x="600" y="380" fill="#facc15" font-family="Arial,sans-serif" font-size="24" font-weight="700" text-anchor="middle">ARQUETIPO</text>
+<g font-family="Arial,sans-serif" font-weight="900" text-anchor="middle">
+<g><circle cx="210" cy="170" r="82" fill="#111827" stroke="#60a5fa" stroke-width="4"/><text x="210" y="163" fill="#93c5fd" font-size="25">ARQUITECTO</text><text x="210" y="195" fill="#d1d5db" font-size="17">ESTRUCTURA</text></g>
+<g><circle cx="990" cy="170" r="82" fill="#111827" stroke="#a78bfa" stroke-width="4"/><text x="990" y="163" fill="#c4b5fd" font-size="25">ALQUIMISTA</text><text x="990" y="195" fill="#d1d5db" font-size="17">NARRATIVA</text></g>
+<g><circle cx="210" cy="530" r="82" fill="#111827" stroke="#34d399" stroke-width="4"/><text x="210" y="523" fill="#6ee7b7" font-size="25">EXPLORADOR</text><text x="210" y="555" fill="#d1d5db" font-size="17">EXPERIMENTO</text></g>
+<g><circle cx="990" cy="530" r="82" fill="#111827" stroke="#f472b6" stroke-width="4"/><text x="990" y="523" fill="#f9a8d4" font-size="25">OBSERVADOR</text><text x="990" y="555" fill="#d1d5db" font-size="17">PERSPECTIVA</text></g>
+</g>
+</svg>
