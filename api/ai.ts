@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";\nimport { enforceRateLimit, enforceSameOrigin, readJsonBody } from "../src/server/requestSecurity";
 
 type Operation =
   | "strategicDirective"
