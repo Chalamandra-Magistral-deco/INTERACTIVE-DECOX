@@ -119,22 +119,20 @@ export async function POST(request: Request): Promise<Response> {
     return json({ error: "Method not allowed" }, 405);
   }
 
-  const origin = request.headers.get("origin");
-  if (origin && origin !== new URL(request.url).origin) {
-    return json({ error: "Forbidden origin" }, 403);
-  }
+  const originError = enforceSameOrigin(request);
+  if (originError) return originError;
+
+  const rateLimitError = enforceRateLimit(request, "ai", 12, 60_000);
+  if (rateLimitError) return rateLimitError;
 
   const apiKey = process.env.GEMINI_API_KEY?.trim();
   if (!apiKey) {
     return json({ error: "AI service is not configured" }, 503);
   }
 
-  let body: { operation?: Operation; payload?: Payload };
-  try {
-    body = await request.json();
-  } catch {
-    return json({ error: "Invalid JSON body" }, 400);
-  }
+  const parsedBody = await readJsonBody<{ operation?: Operation; payload?: Payload }>(request, 32_768);
+  if ("error" in parsedBody) return parsedBody.error;
+  const body = parsedBody.data;
 
   const allowed: Operation[] = [
     "strategicDirective",
