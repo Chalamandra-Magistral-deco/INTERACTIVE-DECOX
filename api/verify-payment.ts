@@ -1,4 +1,4 @@
-const PRICE_TO_SERVICE = {
+import { enforceRateLimit } from "../src/server/requestSecurity";\n\nconst PRICE_TO_SERVICE = {
   discovery: process.env.STRIPE_DISCOVERY_PRICE_ID?.trim() || "",
   magistral: process.env.STRIPE_MAGISTRAL_PRICE_ID?.trim() || "",
 } as const;
@@ -12,7 +12,7 @@ const json = (body: Record<string, unknown>, status = 200): Response =>
     },
   });
 
-export async function GET(request: Request): Promise<Response> {
+export async function GET(request: Request): Promise<Response> {\n  const rateLimitError = enforceRateLimit(request, "verify-payment", 20, 60_000);\n  if (rateLimitError) return rateLimitError;
   const secret = process.env.STRIPE_SECRET_KEY?.trim();
   if (!secret) {
     return json({ error: "Payment verification is not configured" }, 503);
