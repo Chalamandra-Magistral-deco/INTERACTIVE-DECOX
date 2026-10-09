@@ -22,7 +22,7 @@ async function handleGET(request: Request): Promise<Response> {
     return json({ error: "Payment verification is not configured" }, 503);
   }
 
-  if (!PRICE_TO_SERVICE.discovery || !PRICE_TO_SERVICE.magistral) {
+  if (Object.values(PRICE_TO_SERVICE).every((priceId) => !priceId)) {
     return json({ error: "Stripe price mapping is not configured" }, 503);
   }
 
