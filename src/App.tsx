@@ -29,7 +29,6 @@ import PowerLensGenerator from "@/components/PowerLensGenerator";
 import GrimorioTacticoSection from "@/components/GrimorioTacticoSection";
 import SRAPMetronome from "@/components/SRAPMetronome";
 import OraculoChalamandra from "@/components/OraculoChalamandra";
-import KitMagistralRPG from "@/components/KitMagistralRPG";
 import PremiumServices from "@/components/PremiumServices";
 import SrapRitual from "@/components/SrapRitual";
 import Header from "@/components/Header";
@@ -366,11 +365,7 @@ const App: React.FC = () => {
 
         <GrimorioTacticoSection />
         <OraculoChalamandra onComboReveal={handleComboReveal} />
-        <KitMagistralRPG
-          onOpenModule={(id) =>
-            showModal("hack", HACKS_DATA.find((hack) => hack.id === id) ?? null)
-          }
-        />
+
         <SrapRitual
           onActivate={() => showModal("srap")}
           playUIClick={() => playSound("uiClick", "G5", "32n")}

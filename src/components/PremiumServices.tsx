@@ -51,7 +51,7 @@ const PremiumServices: React.FC<PremiumServicesProps> = ({
           Acelera tu evolución con una intervención directa.
         </p>
 
-        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-8 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-8 lg:grid-cols-1">
           <div className="flex flex-col rounded-2xl border border-gray-700 bg-gray-800 p-8 text-center">
             <h3 className="mb-4 text-3xl font-bold text-yellow-300">
               Sesión Descubrimiento
@@ -85,38 +85,6 @@ const PremiumServices: React.FC<PremiumServicesProps> = ({
             </div>
           </div>
 
-          <div className="flex flex-col rounded-2xl border-2 border-purple-500 bg-gray-800 p-8 text-center shadow-2xl shadow-purple-500/30">
-            <h3 className="mb-4 text-3xl font-bold text-purple-300">
-              Kit Magistral
-            </h3>
-            <p className="mb-4 text-5xl font-black text-white">
-              $397 <span className="text-lg font-semibold text-gray-400">USD</span>
-            </p>
-            <p className="flex-grow text-gray-300">
-              Un mes de implementación intensiva. 4 sesiones para instalar
-              tus hacks fundamentales y soporte directo.
-            </p>
-
-            <div className="mt-8 space-y-3">
-              <button
-                type="button"
-                onClick={() => {
-                  playUIClick();
-                  onServiceClick("magistral");
-                }}
-                className="w-full rounded-lg bg-white/10 py-3 font-bold text-white transition-colors hover:bg-white/20"
-              >
-                Saber Más
-              </button>
-
-              <PurchaseLink
-                href={PAYMENT_LINKS.magistral}
-                className="block w-full rounded-lg bg-purple-600 py-3 font-black text-white shadow-lg transition-colors hover:bg-purple-500"
-              >
-                ADQUIRIR AHORA
-              </PurchaseLink>
-            </div>
-          </div>
         </div>
       </div>
     </section>
