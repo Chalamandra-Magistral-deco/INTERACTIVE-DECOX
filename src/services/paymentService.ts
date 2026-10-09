@@ -1,3 +1,4 @@
+import { apiUrl } from "@/config/api";
 export type VerifiedService = "discovery" | "magistral";
 
 interface PaymentVerificationResponse {
@@ -10,7 +11,7 @@ export async function verifyPaymentSession(
   sessionId: string,
 ): Promise<VerifiedService | null> {
   const response = await fetch(
-    `/api/verify-payment?session_id=${encodeURIComponent(sessionId)}`,
+    apiUrl(`/api/verify-payment?session_id=${encodeURIComponent(sessionId)}`),
     { headers: { accept: "application/json" } },
   );
 

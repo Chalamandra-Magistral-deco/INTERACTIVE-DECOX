@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { apiUrl } from "@/config/api";
 import { generateContactConfirmation } from "@/services/geminiService";
 
 type FormStatus = "idle" | "loading" | "success" | "error";
@@ -58,7 +59,7 @@ const ContactForm: React.FC = () => {
     setMessage("");
 
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch(apiUrl("/api/contact"), {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(formData),
@@ -196,7 +197,6 @@ const ContactForm: React.FC = () => {
                 aria-label="Servicio de Interés"
               >
                 <option>Transformación Total</option>
-                <option>Kit Magistral</option>
                 <option>Sesión Descubrimiento</option>
               </select>
             </div>

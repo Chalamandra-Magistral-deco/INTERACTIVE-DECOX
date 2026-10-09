@@ -1,3 +1,4 @@
+import { apiUrl } from "@/config/api";
 type AIResponse = {
   text?: string;
   error?: string;
@@ -12,7 +13,7 @@ const requestAI = async (
     | "alchemicalCombo",
   payload: Record<string, unknown>,
 ): Promise<string> => {
-  const response = await fetch("/api/ai", {
+  const response = await fetch(apiUrl("/api/ai"), {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ operation, payload }),

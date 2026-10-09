@@ -1,3 +1,5 @@
+import { createPreflightResponse, isAllowedApiOrigin, withCors } from "../src/server/cors.js";
+
 type ContactPayload = {
   name: string;
   email: string;
@@ -22,18 +24,9 @@ const clean = (value: unknown, maxLength: number): string =>
 const isValidEmail = (email: string): boolean =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-export async function POST(request: Request): Promise<Response> {
-  const origin = request.headers.get("origin");
-  if (origin && origin !== new URL(request.url).origin) {
+async function handlePOST(request: Request): Promise<Response> {
+  if (!isAllowedApiOrigin(request.headers.get("origin"), request.url)) {
     return json({ error: "Forbidden origin" }, 403);
-  }
-
-  const resendKey = process.env.RESEND_API_KEY?.trim();
-  const destination = process.env.CONTACT_TO_EMAIL?.trim();
-  const sender = process.env.CONTACT_FROM_EMAIL?.trim();
-
-  if (!resendKey || !destination || !sender) {
-    return json({ error: "Contact delivery is not configured" }, 503);
   }
 
   let body: Partial<ContactPayload>;
@@ -64,40 +57,59 @@ export async function POST(request: Request): Promise<Response> {
     return json({ error: "Please provide valid contact data" }, 400);
   }
 
-  const subject = `Nueva solicitud Chalamandra — ${contact.service || "General"}`;
-  const text = [
-    `Nombre: ${contact.name}`,
-    `Email: ${contact.email}`,
-    `Teléfono: ${contact.phone || "No proporcionado"}`,
-    `Servicio: ${contact.service || "No especificado"}`,
-    "",
-    "Objetivo / fricción:",
-    contact.objective,
-  ].join("\n");
-
   try {
-    const response = await fetch("https://api.resend.com/emails", {
+    const response = await fetch("https://formspree.io/f/xbgdyjnk", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${resendKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: sender,
-        to: [destination],
-        reply_to: contact.email,
-        subject,
-        text,
+        ...contact,
+        _replyto: contact.email,
+        _subject: `Nueva solicitud Chalamandra — ${contact.service || "General"}`,
       }),
     });
 
     if (!response.ok) {
+      console.error("Formspree contact error:", response.status);
       return json({ error: "Contact delivery failed" }, 502);
     }
 
     return json({ ok: true });
   } catch (error) {
-    console.error("Contact provider error:", error instanceof Error ? error.message : "unknown");
+    console.error(
+      "Formspree contact error:",
+      error instanceof Error ? error.message : "unknown",
+    );
     return json({ error: "Contact delivery failed" }, 502);
   }
+}
+
+const POST_CORS_POLICY = {
+  methods: ["POST", "OPTIONS"],
+  headers: ["Content-Type"],
+} as const;
+
+export async function POST(request: Request): Promise<Response> {
+  if (request.method === "OPTIONS") {
+    return createPreflightResponse(request, POST_CORS_POLICY);
+  }
+
+  if (request.method !== "POST") {
+    return withCors(
+      request,
+      json({ error: "Method not allowed" }, 405),
+      POST_CORS_POLICY,
+    );
+  }
+
+  return withCors(
+    request,
+    await handlePOST(request),
+    POST_CORS_POLICY,
+  );
+}
+
+export function OPTIONS(request: Request): Response {
+  return createPreflightResponse(request, POST_CORS_POLICY);
 }

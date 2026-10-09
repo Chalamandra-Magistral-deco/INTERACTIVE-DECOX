@@ -1,3 +1,4 @@
+import { createPreflightResponse, isAllowedApiOrigin, withCors } from "../src/server/cors.js";
 const PRICE_TO_SERVICE = {
   discovery: process.env.STRIPE_DISCOVERY_PRICE_ID?.trim() || "",
   magistral: process.env.STRIPE_MAGISTRAL_PRICE_ID?.trim() || "",
@@ -12,7 +13,10 @@ const json = (body: Record<string, unknown>, status = 200): Response =>
     },
   });
 
-export async function GET(request: Request): Promise<Response> {
+async function handleGET(request: Request): Promise<Response> {
+  if (!isAllowedApiOrigin(request.headers.get("origin"), request.url)) {
+    return json({ error: "Forbidden origin" }, 403);
+  }
   const secret = process.env.STRIPE_SECRET_KEY?.trim();
   if (!secret) {
     return json({ error: "Payment verification is not configured" }, 503);
@@ -68,4 +72,33 @@ export async function GET(request: Request): Promise<Response> {
   }
 
   return json({ verified: true, service });
+}
+
+const GET_CORS_POLICY = {
+  methods: ["GET", "OPTIONS"],
+  headers: ["Accept"],
+} as const;
+
+export async function GET(request: Request): Promise<Response> {
+  if (request.method === "OPTIONS") {
+    return createPreflightResponse(request, GET_CORS_POLICY);
+  }
+
+  if (request.method !== "GET") {
+    return withCors(
+      request,
+      json({ error: "Method not allowed" }, 405),
+      GET_CORS_POLICY,
+    );
+  }
+
+  return withCors(
+    request,
+    await handleGET(request),
+    GET_CORS_POLICY,
+  );
+}
+
+export function OPTIONS(request: Request): Response {
+  return createPreflightResponse(request, GET_CORS_POLICY);
 }

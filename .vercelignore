@@ -1,0 +1,9 @@
+.env.firebase
+.env.firebase.local
+.firebase/
+.firebaserc
+firebase.json
+.agents/
+docs/
+skills-lock.json
+supabase/.temp/

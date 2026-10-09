@@ -1,3 +1,4 @@
+import { createPreflightResponse, isAllowedApiOrigin, withCors } from "../src/server/cors.js";
 import { GoogleGenAI } from "@google/genai";
 
 type Operation =
@@ -114,13 +115,12 @@ Devuelve SOLO el resultado en el formato:
   }
 };
 
-export async function POST(request: Request): Promise<Response> {
+async function handlePOST(request: Request): Promise<Response> {
   if (request.method !== "POST") {
     return json({ error: "Method not allowed" }, 405);
   }
 
-  const origin = request.headers.get("origin");
-  if (origin && origin !== new URL(request.url).origin) {
+  if (!isAllowedApiOrigin(request.headers.get("origin"), request.url)) {
     return json({ error: "Forbidden origin" }, 403);
   }
 
@@ -170,4 +170,33 @@ export async function POST(request: Request): Promise<Response> {
     console.error("AI provider error:", error instanceof Error ? error.message : "unknown");
     return json({ error: "AI generation failed" }, 502);
   }
+}
+
+const POST_CORS_POLICY = {
+  methods: ["POST", "OPTIONS"],
+  headers: ["Content-Type"],
+} as const;
+
+export async function POST(request: Request): Promise<Response> {
+  if (request.method === "OPTIONS") {
+    return createPreflightResponse(request, POST_CORS_POLICY);
+  }
+
+  if (request.method !== "POST") {
+    return withCors(
+      request,
+      json({ error: "Method not allowed" }, 405),
+      POST_CORS_POLICY,
+    );
+  }
+
+  return withCors(
+    request,
+    await handlePOST(request),
+    POST_CORS_POLICY,
+  );
+}
+
+export function OPTIONS(request: Request): Response {
+  return createPreflightResponse(request, POST_CORS_POLICY);
 }

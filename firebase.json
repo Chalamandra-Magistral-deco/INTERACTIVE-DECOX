@@ -1,0 +1,17 @@
+{
+  "hosting": {
+    "site": "interactive-decox-875051-3b397",
+    "public": "dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "!/@(api)/**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
