@@ -181,21 +181,17 @@ const App: React.FC = () => {
     [handleCelebration],
   );
 
-  const toggleHackCompletion = useCallback(
+  const markHackCompleted = useCallback(
     (id: number) => {
       if (!HACKS_DATA.some((hack) => hack.id === id)) return;
 
-      const newCompleted = new Set(completedHacks);
-      const isCompleting = !newCompleted.has(id);
+      if (completedHacks.has(id)) return;
 
-      if (isCompleting) {
-        newCompleted.add(id);
-        playSound("completion", "C5", "16n");
-        playSound("completion", "G5", "16n", Tone.now() + 0.1);
-        checkCertifications(newCompleted, earnedCerts);
-      } else {
-        newCompleted.delete(id);
-      }
+      const newCompleted = new Set(completedHacks);
+      newCompleted.add(id);
+      playSound("completion", "C5", "16n");
+      playSound("completion", "G5", "16n", Tone.now() + 0.1);
+      checkCertifications(newCompleted, earnedCerts);
 
       setCompletedHacks(newCompleted);
       writeJSON("completedHacks", Array.from(newCompleted));
@@ -387,7 +383,7 @@ const App: React.FC = () => {
           modalState={modalState}
           hideModal={hideModal}
           showModal={showModal}
-          toggleHackCompletion={toggleHackCompletion}
+          markHackCompleted={markHackCompleted}
         />
       </AnimatePresence>
 

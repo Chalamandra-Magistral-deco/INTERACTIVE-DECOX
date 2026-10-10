@@ -6,7 +6,11 @@ const json = (body: Record<string, unknown>, status = 200): Response =>
     headers: { "content-type": "application/json; charset=utf-8" },
   });
 
-const verifySignature = (payload: string, signature: string, secret: string): boolean => {
+const verifySignature = (
+  payload: string,
+  signature: string,
+  secret: string,
+): boolean => {
   const values = signature.split(",");
   const timestamp = values.find((part) => part.startsWith("t="))?.slice(2);
   const signatures = values
@@ -49,14 +53,24 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   let event: {
+    id?: string;
     type?: string;
-    data?: { object?: { id?: string; payment_status?: string } };
+    data?: {
+      object?: {
+        id?: string;
+        payment_status?: string;
+      };
+    };
   };
 
   try {
     event = JSON.parse(payload);
   } catch {
     return json({ error: "Invalid webhook JSON" }, 400);
+  }
+
+  if (!event.id) {
+    return json({ error: "Missing Stripe event id" }, 400);
   }
 
   const supported = new Set([
@@ -69,12 +83,21 @@ export async function POST(request: Request): Promise<Response> {
 
     if (fulfillmentUrl) {
       try {
+        const sessionId = event.data?.object?.id || null;
+        if (!sessionId) {
+          return json({ error: "Missing Checkout Session id" }, 400);
+        }
+
         const fulfillmentResponse = await fetch(fulfillmentUrl, {
           method: "POST",
-          headers: { "content-type": "application/json" },
+          headers: {
+            "content-type": "application/json",
+            "idempotency-key": event.id,
+          },
           body: JSON.stringify({
+            event_id: event.id,
             event_type: event.type,
-            session_id: event.data?.object?.id || null,
+            session_id: sessionId,
             payment_status: event.data?.object?.payment_status || null,
           }),
           signal: AbortSignal.timeout(3000),
@@ -93,7 +116,5 @@ export async function POST(request: Request): Promise<Response> {
     }
   }
 
-  // Always acknowledge a verified Stripe event quickly. Durable fulfillment
-  // belongs in the configured downstream system, not in the browser.
   return json({ received: true });
 }

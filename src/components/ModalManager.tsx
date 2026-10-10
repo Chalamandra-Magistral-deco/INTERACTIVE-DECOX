@@ -16,14 +16,14 @@ interface ModalManagerProps {
   modalState: ModalState;
   hideModal: () => void;
   showModal: (type: ModalState["type"], data?: ModalData) => void;
-  toggleHackCompletion: (id: number) => void;
+  markHackCompleted: (id: number) => void;
 }
 
 const ModalManager: React.FC<ModalManagerProps> = ({
   modalState,
   hideModal,
   showModal,
-  toggleHackCompletion,
+  markHackCompleted,
 }) => {
   if (!modalState.isOpen) return null;
 
@@ -61,7 +61,7 @@ const ModalManager: React.FC<ModalManagerProps> = ({
         <HackPracticeModule
           hack={hack}
           onComplete={() => {
-            toggleHackCompletion(hack.id);
+            markHackCompleted(hack.id);
             hideModal();
           }}
         />

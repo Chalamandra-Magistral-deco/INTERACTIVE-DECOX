@@ -37,7 +37,7 @@ const HackCard: React.FC<{ hack: Hack; isCompleted: boolean; onActivate: () => v
                     onClick={onActivate} 
                     className={`text-[10px] font-black uppercase tracking-widest py-3 rounded-xl transition-all ${isCompleted ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-yellow-500 hover:bg-yellow-400 text-black shadow-lg shadow-yellow-500/20'}`}
                 >
-                    {isCompleted ? 'Re-Activar' : 'Activar'}
+                    {isCompleted ? 'Practicar de Nuevo' : 'Activar'}
                 </button>
             </div>
         </div>
