@@ -1,6 +1,7 @@
 {
   "name": "chalamandra-magistral",
   "version": "1.0.0",
+  "type": "module",
   "description": "An interactive web application for the Chalamandra Magistral system.",
   "private": true,
   "scripts": {

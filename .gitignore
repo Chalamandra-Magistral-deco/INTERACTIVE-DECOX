@@ -8,3 +8,4 @@
 *.tsbuildinfo
 node_modules
 dist
+.env*
