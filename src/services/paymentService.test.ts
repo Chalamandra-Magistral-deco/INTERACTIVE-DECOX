@@ -30,4 +30,13 @@ describe("verifyPaymentSession", () => {
 
     await expect(verifyPaymentSession("cs_test_456")).resolves.toBeNull();
   });
+  it("rejects a legacy Magistral service even if the response claims payment is verified", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ verified: true, service: "magistral" }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(verifyPaymentSession("cs_test_789")).resolves.toBeNull();
+  });
 });

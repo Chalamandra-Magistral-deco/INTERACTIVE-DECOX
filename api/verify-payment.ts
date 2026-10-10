@@ -1,6 +1,5 @@
 const PRICE_TO_SERVICE = {
   discovery: process.env.STRIPE_DISCOVERY_PRICE_ID?.trim() || "",
-  magistral: process.env.STRIPE_MAGISTRAL_PRICE_ID?.trim() || "",
 } as const;
 
 const json = (body: Record<string, unknown>, status = 200): Response =>
@@ -18,7 +17,7 @@ export async function GET(request: Request): Promise<Response> {
     return json({ error: "Payment verification is not configured" }, 503);
   }
 
-  if (!PRICE_TO_SERVICE.discovery || !PRICE_TO_SERVICE.magistral) {
+  if (!PRICE_TO_SERVICE.discovery) {
     return json({ error: "Stripe price mapping is not configured" }, 503);
   }
 

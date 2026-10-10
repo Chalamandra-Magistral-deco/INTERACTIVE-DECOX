@@ -65,7 +65,7 @@ export interface Certification {
   srap: string;
 }
 
-export type ServiceType = "discovery" | "magistral";
+export type ServiceType = "discovery";
 
 export interface PostPaymentData {
   serviceName: ServiceType;

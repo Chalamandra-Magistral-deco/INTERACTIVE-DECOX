@@ -1,4 +1,4 @@
-export type VerifiedService = "discovery" | "magistral";
+export type VerifiedService = "discovery";
 
 interface PaymentVerificationResponse {
   verified?: boolean;
@@ -21,7 +21,7 @@ export async function verifyPaymentSession(
     return null;
   }
 
-  if (!response.ok || !data.verified || !data.service) {
+  if (!response.ok || !data.verified || data.service !== "discovery") {
     return null;
   }
 

@@ -9,7 +9,6 @@ import {
 } from "@/utils/types";
 import PostPaymentPage from "./PostPaymentPage";
 import DiscoverySessionPage from "./DiscoverySessionPage";
-import KitMagistralSection from "./KitMagistralSection";
 import HackEducationalModule from "./HackEducationalModule";
 import HackPracticeModule from "./HackPracticeModule";
 
@@ -40,14 +39,6 @@ const ModalManager: React.FC<ModalManagerProps> = ({
       title = "Sesión Descubrimiento";
       subtitle = "Tu primer paso hacia la decodificación.";
       modalBody = <DiscoverySessionPage />;
-      break;
-
-    case "magistral":
-      title = "Kit Magistral";
-      subtitle = "La arquitectura para dominar tus hacks.";
-      modalBody = (
-        <KitMagistralSection onShowDiscovery={() => showModal("discovery")} />
-      );
       break;
 
     case "hack":

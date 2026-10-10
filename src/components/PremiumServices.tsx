@@ -2,7 +2,7 @@ import React from "react";
 import { PAYMENT_LINKS } from "@/config/public";
 
 interface PremiumServicesProps {
-  onServiceClick: (service: "discovery" | "magistral") => void;
+  onServiceClick: (service: "discovery") => void;
   playUIClick: () => void;
 }
 

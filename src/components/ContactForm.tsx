@@ -196,7 +196,6 @@ const ContactForm: React.FC = () => {
                 aria-label="Servicio de Interés"
               >
                 <option>Transformación Total</option>
-                <option>Kit Magistral</option>
                 <option>Sesión Descubrimiento</option>
               </select>
             </div>
