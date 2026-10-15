@@ -1,13 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "cleanUrls": true,
   "rewrites": [
     { "source": "/ads.txt", "destination": "/ads.txt" },
     { "source": "/app-ads.txt", "destination": "/app-ads.txt" },
-    {
-      "source": "/((?!api/|assets/|_vercel/|favicon\\.ico|robots\\.txt|sitemap\\.xml|ads\\.txt|app-ads\\.txt|googlex.*\\.html|.*\\.[a-zA-Z0-9]+$).*)",
-      "destination": "/index.html"
-    }
+    { "source": "/((?!api/|assets/|_vercel/|.*\\..*).*)", "destination": "/index.html" }
   ],
   "headers": [
     {
