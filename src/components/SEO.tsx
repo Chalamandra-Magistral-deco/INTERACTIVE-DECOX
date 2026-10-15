@@ -19,9 +19,9 @@ const SEO: React.FC<SEOProps> = ({
   title = "Chalamandra Magistral | Sistema Operativo del 1%",
   description = "Domina el Grimorio Táctico: fusión cognitiva, modelos mentales y ventaja estratégica. Decodifica tu realidad y desmantela tus límites con Chalamandra Magistral.",
   keywords = "cognitive fusion, mental models, strategic advantage, alto rendimiento, hacks cognitivos, chalamandra magistral",
-  canonical = "https://chalamandramagistral.com",
+  canonical = "https://interactive.chalamandramagistral.com",
   ogType = "website",
-  ogImage = "https://chalamandramagistral.com/og-image.jpg",
+  ogImage = "https://interactive.chalamandramagistral.com/og-image.jpg",
   twitterHandle = "@chalamandra",
 }) => {
   return (

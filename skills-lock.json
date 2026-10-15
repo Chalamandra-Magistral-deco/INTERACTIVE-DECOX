@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "search-term-miner": {
+      "source": "aaron-he-zhu/aaron-marketing-skills",
+      "sourceType": "github",
+      "skillPath": "ad/research/search-term-miner/SKILL.md",
+      "computedHash": "642ea4f62989ad69e93d5eceec4ebfe46fb53245b7fda46b4cb67fe54ff28770"
+    }
+  }
+}
