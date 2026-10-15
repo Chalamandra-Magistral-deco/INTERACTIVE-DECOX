@@ -28,6 +28,8 @@ import SrapRitual from "@/components/SrapRitual";
 import Header from "@/components/Header";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import ModalManager from "@/components/ModalManager";
+import { startFeedbackLoop, stopFeedbackLoop } from "@/feedback/loop";
+import type { Adaptation } from "@/feedback/analyze";
 
 // ===== LAZY — features que cargan bajo demanda =====
 const Confetti              = lazy(() => import("@/components/Confetti"));
@@ -94,6 +96,8 @@ const App: React.FC = () => {
   const [isDirectiveLoading, setIsDirectiveLoading] = useState(false);
   const [directiveFeedback, setDirectiveFeedback] = useState<"helpful" | "not-helpful" | null>(() => readJSON<"helpful" | "not-helpful" | null>("directiveFeedback", null));
 
+  const [adaptFlags, setAdaptFlags] = useState<Record<string, boolean>>({});
+
   const {
     startAudioContext,
     playSound,
@@ -140,6 +144,14 @@ const App: React.FC = () => {
     };
 
     void completePurchase();
+  }, []);
+
+  useEffect(() => {
+    startFeedbackLoop((action: Adaptation) => {
+      setAdaptFlags((prev) => ({ ...prev, [action.apply]: true }));
+      if (action.msg) toast.info(action.msg);
+    });
+    return () => stopFeedbackLoop();
   }, []);
 
   const handleCelebration = useCallback(() => {
@@ -303,6 +315,7 @@ const App: React.FC = () => {
     <div
       className="min-h-screen bg-black font-sans selection:bg-yellow-400 selection:text-black"
       onClick={() => void startAudioContext()}
+      data-adapt-flags={JSON.stringify(adaptFlags)}
     >
       <SEO />
       <Toaster position="top-center" expand={false} richColors theme="dark" />
