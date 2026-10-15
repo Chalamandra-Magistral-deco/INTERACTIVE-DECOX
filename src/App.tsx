@@ -21,7 +21,6 @@ import Faq from "@/components/Faq";
 import Footer from "@/components/Footer";
 import HacksSection from "@/components/HacksSection";
 import ContactForm from "@/components/ContactForm";
-import SRAPMetronome from "@/components/SRAPMetronome";
 import PremiumServices from "@/components/PremiumServices";
 import SrapRitual from "@/components/SrapRitual";
 import Header from "@/components/Header";
@@ -38,6 +37,7 @@ const PowerLensGenerator    = lazy(() => import("@/components/PowerLensGenerator
 const GrimorioTacticoSection = lazy(() => import("@/components/GrimorioTacticoSection"));
 const OraculoChalamandra    = lazy(() => import("@/components/OraculoChalamandra"));
 const TheCodex              = lazy(() => import("@/components/TheCodex"));
+const SRAPMetronome         = lazy(() => import("@/components/SRAPMetronome"));
 
 const SectionLoader = () => (
   <div className="py-16 text-center text-xs font-black uppercase tracking-widest text-gray-600">
@@ -405,7 +405,9 @@ const App: React.FC = () => {
           onActivate={() => showModal("srap")}
           playUIClick={() => playSound("uiClick", "G5", "32n")}
         />
-        <SRAPMetronome />
+        <Suspense fallback={null}>
+          <SRAPMetronome />
+        </Suspense>
 
         <Suspense fallback={null}>
           <TheCodex />
