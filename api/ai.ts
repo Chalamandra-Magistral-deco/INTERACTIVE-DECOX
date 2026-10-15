@@ -12,6 +12,11 @@ type Payload = Record<string, unknown>;
 const MAX_LENGTH = 3000;
 const MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
 
+// Operaciones que soportan streaming
+const STREAM_OPS: Operation[] = ["strategicDirective", "postPaymentDirective", "hook", "alchemicalCombo"];
+
+const sse = (data: Record<string, unknown>): string => `data: ${JSON.stringify(data)}\n\n`;
+
 const json = (body: Record<string, unknown>, status = 200): Response =>
   new Response(JSON.stringify(body), {
     status,
@@ -114,6 +119,48 @@ Devuelve SOLO el resultado en el formato:
   }
 };
 
+async function handleStream(
+  ai: GoogleGenAI,
+  operation: Operation,
+  payload: Payload,
+): Promise<Response> {
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream({
+    async start(controller) {
+      try {
+        const iterator = await ai.models.generateContentStream({
+          model: MODEL,
+          contents: buildPrompt(operation, payload),
+          config: { maxOutputTokens: 220, temperature: 0.8 },
+        });
+
+        for await (const chunk of iterator) {
+          const text = chunk.text ?? "";
+          if (text) {
+            controller.enqueue(encoder.encode(sse({ delta: text })));
+          }
+        }
+        controller.enqueue(encoder.encode(sse({ done: true })));
+      } catch (error) {
+        const msg = error instanceof Error ? error.message : "unknown";
+        controller.enqueue(encoder.encode(sse({ error: msg })));
+      } finally {
+        controller.close();
+      }
+    },
+  });
+
+  return new Response(stream, {
+    status: 200,
+    headers: {
+      "content-type": "text/event-stream; charset=utf-8",
+      "cache-control": "no-store, no-transform",
+      "connection": "keep-alive",
+      "x-accel-buffering": "no",
+    },
+  });
+}
+
 export async function POST(request: Request): Promise<Response> {
   if (request.method !== "POST") {
     return json({ error: "Method not allowed" }, 405);
@@ -149,6 +196,15 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   const ai = new GoogleGenAI({ apiKey });
+
+  // Streaming si el cliente lo pide explícitamente y la op lo soporta
+  const wantsStream =
+    request.headers.get("accept")?.includes("text/event-stream") ||
+    request.headers.get("x-stream") === "1";
+
+  if (wantsStream && STREAM_OPS.includes(body.operation)) {
+    return handleStream(ai, body.operation, body.payload || {});
+  }
 
   try {
     const response = await ai.models.generateContent({

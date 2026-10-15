@@ -9,7 +9,7 @@ import {
   ModalState,
   PurchasedService,
 } from "@/utils/types";
-import { generateStrategicDirective } from "@/services/geminiService";
+import { streamStrategicDirective } from "@/services/geminiService";
 import { verifyPaymentSession } from "@/services/paymentService";
 import { useAudio } from "@/hooks/useAudio";
 
@@ -243,14 +243,18 @@ const App: React.FC = () => {
         ? `Su arquetipo dominante es '${dominantArchetype}'.`
         : "Aún no ha descubierto su arquetipo.";
 
-      const directive = await generateStrategicDirective(
+      await streamStrategicDirective(
         completedHackTitles,
         remainingHacks,
         archetypeInfo,
         directiveFeedback || "Sin feedback previo.",
+        {
+          onChunk: (_delta, fullText) => {
+            setAiDirective(fullText);
+          },
+        },
       );
 
-      setAiDirective(directive);
       playSound("directive", "G5", "32n");
       playSound("directive", "D6", "32n", getAudioTime() + 0.075);
     } catch (error) {

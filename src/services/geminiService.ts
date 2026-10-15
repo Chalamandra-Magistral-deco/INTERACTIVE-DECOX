@@ -32,6 +32,110 @@ const requestAI = async (
   return data.text.trim();
 };
 
+export type StreamHandlers = {
+  onChunk: (delta: string, fullText: string) => void;
+  onDone?: (fullText: string) => void;
+  onError?: (err: Error) => void;
+  signal?: AbortSignal;
+};
+
+export async function streamStrategicDirective(
+  completedHacks: string,
+  remainingHacks: string,
+  archetypeInfo: string,
+  feedback: string,
+  handlers: StreamHandlers,
+): Promise<string> {
+  const { onChunk, onDone, onError, signal } = handlers;
+  let full = "";
+
+  try {
+    const response = await fetch("/api/ai", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        accept: "text/event-stream",
+        "x-stream": "1",
+      },
+      body: JSON.stringify({
+        operation: "strategicDirective",
+        payload: { completedHacks, remainingHacks, archetypeInfo, feedback },
+      }),
+      signal,
+    });
+
+    if (!response.ok || !response.body) {
+      throw new Error(`Stream failed: ${response.status}`);
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const events = buffer.split("\n\n");
+      buffer = events.pop() ?? "";
+
+      for (const evt of events) {
+        const line = evt.trim();
+        if (!line.startsWith("data:")) continue;
+
+        const payload = line.slice(5).trim();
+        if (!payload) continue;
+
+        try {
+          const parsed = JSON.parse(payload) as {
+            delta?: string;
+            done?: boolean;
+            error?: string;
+          };
+
+          if (parsed.error) {
+            throw new Error(parsed.error);
+          }
+          if (parsed.delta) {
+            full += parsed.delta;
+            onChunk(parsed.delta, full);
+          }
+          if (parsed.done) {
+            onDone?.(full);
+            return full;
+          }
+        } catch (e) {
+          // Ignorar chunks JSON malformados y seguir
+          if (e instanceof Error && e.message !== "Unexpected end of JSON input") {
+            throw e;
+          }
+        }
+      }
+    }
+
+    onDone?.(full);
+    return full;
+  } catch (error) {
+    const err = error instanceof Error ? error : new Error("Unknown stream error");
+    onError?.(err);
+    // Fallback: usar la versión no-streaming para no dejar al usuario sin directiva
+    try {
+      const fallback = await generateStrategicDirective(
+        completedHacks,
+        remainingHacks,
+        archetypeInfo,
+        feedback,
+      );
+      onChunk(fallback, fallback);
+      onDone?.(fallback);
+      return fallback;
+    } catch {
+      throw err;
+    }
+  }
+}
+
 export async function generateStrategicDirective(
   completedHacks: string,
   remainingHacks: string,
