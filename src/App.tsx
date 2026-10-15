@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, lazy, Suspense } from "react";
 import { Toaster, toast } from "sonner";
 import { AnimatePresence, motion } from "motion/react";
 import * as Tone from "tone";
@@ -14,27 +14,35 @@ import { generateStrategicDirective } from "@/services/geminiService";
 import { verifyPaymentSession } from "@/services/paymentService";
 import { useAudio } from "@/hooks/useAudio";
 
-import Confetti from "@/components/Confetti";
 import SEO from "@/components/SEO";
 import Introduction from "@/components/Introduction";
 import HowItWorks from "@/components/HowItWorks";
 import Testimonials from "@/components/Testimonials";
 import Faq from "@/components/Faq";
 import Footer from "@/components/Footer";
-import ArchetypeQuiz from "@/components/ArchetypeQuiz";
 import HacksSection from "@/components/HacksSection";
 import ContactForm from "@/components/ContactForm";
-import ArchitectDashboard from "@/components/ArchitectDashboard";
-import PowerLensGenerator from "@/components/PowerLensGenerator";
-import GrimorioTacticoSection from "@/components/GrimorioTacticoSection";
 import SRAPMetronome from "@/components/SRAPMetronome";
-import OraculoChalamandra from "@/components/OraculoChalamandra";
 import PremiumServices from "@/components/PremiumServices";
 import SrapRitual from "@/components/SrapRitual";
 import Header from "@/components/Header";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
-import TheCodex from "@/components/TheCodex";
 import ModalManager from "@/components/ModalManager";
+
+// ===== LAZY — features que cargan bajo demanda =====
+const Confetti              = lazy(() => import("@/components/Confetti"));
+const ArchetypeQuiz         = lazy(() => import("@/components/ArchetypeQuiz"));
+const ArchitectDashboard    = lazy(() => import("@/components/ArchitectDashboard"));
+const PowerLensGenerator    = lazy(() => import("@/components/PowerLensGenerator"));
+const GrimorioTacticoSection = lazy(() => import("@/components/GrimorioTacticoSection"));
+const OraculoChalamandra    = lazy(() => import("@/components/OraculoChalamandra"));
+const TheCodex              = lazy(() => import("@/components/TheCodex"));
+
+const SectionLoader = () => (
+  <div className="py-16 text-center text-xs font-black uppercase tracking-widest text-gray-600">
+    Cargando…
+  </div>
+);
 
 const readJSON = <T,>(key: string, fallback: T): T => {
   try {
@@ -283,7 +291,6 @@ const App: React.FC = () => {
     localStorage.removeItem("dominantArchetype");
     localStorage.removeItem("directiveFeedback");
     setDirectiveFeedback(null);
-    // Retaking the diagnostic must not erase earned work.
   }, [playSound]);
 
   const handleComboReveal = useCallback(() => {
@@ -299,7 +306,12 @@ const App: React.FC = () => {
     >
       <SEO />
       <Toaster position="top-center" expand={false} richColors theme="dark" />
-      {celebrate && <Confetti />}
+
+      {celebrate && (
+        <Suspense fallback={null}>
+          <Confetti />
+        </Suspense>
+      )}
 
       <Header
         completedCount={completedHacks.size}
@@ -315,27 +327,33 @@ const App: React.FC = () => {
         <HowItWorks />
 
         {!dominantArchetype ? (
-          <ArchetypeQuiz
-            onQuizComplete={handleQuizComplete}
-            playSelectSound={() => playSound("quizSelect", "C3")}
-          />
+          <Suspense fallback={<SectionLoader />}>
+            <ArchetypeQuiz
+              onQuizComplete={handleQuizComplete}
+              playSelectSound={() => playSound("quizSelect", "C3")}
+            />
+          </Suspense>
         ) : (
           <>
-            <ArchitectDashboard
-              completedHacks={completedHacks}
-              earnedCerts={earnedCerts}
-              dominantArchetype={dominantArchetype}
-              onGenerateDirective={handleGenerateDirective}
-              aiDirective={aiDirective}
-              isDirectiveLoading={isDirectiveLoading}
-              purchasedServices={purchasedServices}
-              directiveFeedback={directiveFeedback}
-              onDirectiveFeedback={(feedback) => {
-                setDirectiveFeedback(feedback);
-                writeJSON("directiveFeedback", feedback);
-              }}
-            />
-            <PowerLensGenerator />
+            <Suspense fallback={<SectionLoader />}>
+              <ArchitectDashboard
+                completedHacks={completedHacks}
+                earnedCerts={earnedCerts}
+                dominantArchetype={dominantArchetype}
+                onGenerateDirective={handleGenerateDirective}
+                aiDirective={aiDirective}
+                isDirectiveLoading={isDirectiveLoading}
+                purchasedServices={purchasedServices}
+                directiveFeedback={directiveFeedback}
+                onDirectiveFeedback={(feedback) => {
+                  setDirectiveFeedback(feedback);
+                  writeJSON("directiveFeedback", feedback);
+                }}
+              />
+            </Suspense>
+            <Suspense fallback={null}>
+              <PowerLensGenerator />
+            </Suspense>
           </>
         )}
 
@@ -362,15 +380,24 @@ const App: React.FC = () => {
           </div>
         )}
 
-        <GrimorioTacticoSection />
-        <OraculoChalamandra onComboReveal={handleComboReveal} />
+        <Suspense fallback={null}>
+          <GrimorioTacticoSection />
+        </Suspense>
+
+        <Suspense fallback={null}>
+          <OraculoChalamandra onComboReveal={handleComboReveal} />
+        </Suspense>
 
         <SrapRitual
           onActivate={() => showModal("srap")}
           playUIClick={() => playSound("uiClick", "G5", "32n")}
         />
         <SRAPMetronome />
-        <TheCodex />
+
+        <Suspense fallback={null}>
+          <TheCodex />
+        </Suspense>
+
         <Testimonials />
         <PremiumServices
           onServiceClick={(type) => showModal(type)}
