@@ -19,4 +19,50 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    target: "es2020",
+    cssCodeSplit: true,
+    sourcemap: false,
+    minify: "esbuild",
+    reportCompressedSize: false,
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("react-dom") || id.includes("/react/") || id.includes("scheduler")) {
+              return "react";
+            }
+            if (id.includes("motion") || id.includes("framer-motion")) {
+              return "motion";
+            }
+            if (id.includes("tone")) {
+              return "tone";
+            }
+            if (id.includes("@supabase") || id.includes("@google/genai")) {
+              return "backend";
+            }
+            if (id.includes("sonner") || id.includes("lucide")) {
+              return "ui";
+            }
+            return "vendor";
+          }
+          // Separar features pesadas por carpeta (bajo riesgo, sin lazy)
+          if (id.includes("/src/components/ArchetypeQuiz")) return "feat-quiz";
+          if (id.includes("/src/components/ArchitectDashboard")) return "feat-dashboard";
+          if (id.includes("/src/components/OraculoChalamandra")) return "feat-oraculo";
+          if (id.includes("/src/components/PowerLensGenerator")) return "feat-powerlens";
+          if (id.includes("/src/components/GrimorioTacticoSection")) return "feat-grimorio";
+          if (id.includes("/src/components/TheCodex")) return "feat-codex";
+        },
+        chunkFileNames: "assets/[name]-[hash].js",
+        entryFileNames: "assets/[name]-[hash].js",
+        assetFileNames: "assets/[name]-[hash][extname]",
+      },
+    },
+  },
+  esbuild: {
+    drop: ["console", "debugger"],
+    legalComments: "none",
+  },
 });
