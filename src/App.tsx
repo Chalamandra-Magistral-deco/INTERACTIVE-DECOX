@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState, lazy, Suspense } from "react";
 import { Toaster, toast } from "sonner";
 import { AnimatePresence, motion } from "motion/react";
-import * as Tone from "tone";
 
 import { CERTIFICATIONS_DATA, HACKS_DATA } from "@/utils/constants";
 import {
@@ -102,6 +101,7 @@ const App: React.FC = () => {
     startAudioContext,
     playSound,
     isAudioContextStarted,
+    getAudioTime,
   } = useAudio();
 
   useEffect(() => {
@@ -158,7 +158,7 @@ const App: React.FC = () => {
     setCelebrate(true);
 
     if (isAudioContextStarted) {
-      const now = Tone.now();
+      const now = getAudioTime();
       ["C4", "E4", "G4", "C5"].forEach((note, index) => {
         playSound("celebration", note, "8n", now + index * 0.15);
       });
@@ -211,7 +211,7 @@ const App: React.FC = () => {
       if (isCompleting) {
         newCompleted.add(id);
         playSound("completion", "C5", "16n");
-        playSound("completion", "G5", "16n", Tone.now() + 0.1);
+        playSound("completion", "G5", "16n", getAudioTime() + 0.1);
         checkCertifications(newCompleted, earnedCerts);
       } else {
         newCompleted.delete(id);
@@ -252,7 +252,7 @@ const App: React.FC = () => {
 
       setAiDirective(directive);
       playSound("directive", "G5", "32n");
-      playSound("directive", "D6", "32n", Tone.now() + 0.075);
+      playSound("directive", "D6", "32n", getAudioTime() + 0.075);
     } catch (error) {
       console.error(
         "Error generating directive:",
@@ -307,8 +307,8 @@ const App: React.FC = () => {
 
   const handleComboReveal = useCallback(() => {
     playSound("comboReveal", "C4", "16n");
-    playSound("comboReveal", "E4", "16n", Tone.now() + 0.07);
-    playSound("comboReveal", "A4", "16n", Tone.now() + 0.14);
+    playSound("comboReveal", "E4", "16n", getAudioTime() + 0.07);
+    playSound("comboReveal", "A4", "16n", getAudioTime() + 0.14);
   }, [playSound]);
 
   return (
