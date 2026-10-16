@@ -36,12 +36,11 @@ export async function POST(request: Request): Promise<Response> {
     return json({ error: "Contact delivery is not configured" }, 503);
   }
 
-  let body: Partial<ContactPayload>;
-  try {
-    body = await request.json();
-  } catch {
+  const parsed = await readJsonBody(request, 16 * 1024);
+  if (!parsed.ok || !isJsonObject(parsed.value)) {
     return json({ error: "Invalid JSON body" }, 400);
   }
+  const body = parsed.value as Partial<ContactPayload>;
 
   const contact = {
     name: clean(body.name, 120),

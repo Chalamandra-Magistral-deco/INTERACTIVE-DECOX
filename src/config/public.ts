@@ -7,7 +7,6 @@
 
 export const PAYMENT_LINKS = {
   discovery: import.meta.env.VITE_STRIPE_DISCOVERY_URL?.trim() || "",
-  magistral: import.meta.env.VITE_STRIPE_MAGISTRAL_URL?.trim() || "",
 } as const;
 
 export const WHATSAPP = {

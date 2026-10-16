@@ -69,7 +69,6 @@ export default defineConfig(({ mode }) => {
   },
   define: {
     "import.meta.env.VITE_STRIPE_DISCOVERY_URL": JSON.stringify(env.VITE_STRIPE_DISCOVERY_URL || ""),
-    "import.meta.env.VITE_STRIPE_MAGISTRAL_URL": JSON.stringify(env.VITE_STRIPE_MAGISTRAL_URL || ""),
     "import.meta.env.VITE_WHATSAPP_NUMBER": JSON.stringify(env.VITE_WHATSAPP_NUMBER || ""),
     "import.meta.env.VITE_WHATSAPP_MESSAGE": JSON.stringify(env.VITE_WHATSAPP_MESSAGE || ""),
     "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(env.VITE_SUPABASE_URL || ""),

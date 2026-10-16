@@ -1,3 +1,4 @@
+import { readJsonBody, isJsonObject } from "../src/server/json";
 import { GoogleGenAI } from "@google/genai";
 
 type Operation =
@@ -176,12 +177,11 @@ export async function POST(request: Request): Promise<Response> {
     return json({ error: "AI service is not configured" }, 503);
   }
 
-  let body: { operation?: Operation; payload?: Payload };
-  try {
-    body = await request.json();
-  } catch {
+  const parsed = await readJsonBody(request, 32 * 1024);
+  if (!parsed.ok || !isJsonObject(parsed.value)) {
     return json({ error: "Invalid JSON body" }, 400);
   }
+  const body = parsed.value as { operation?: Operation; payload?: Payload };
 
   const allowed: Operation[] = [
     "strategicDirective",

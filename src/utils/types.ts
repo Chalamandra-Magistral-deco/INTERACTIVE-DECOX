@@ -76,7 +76,6 @@ export type ModalType =
   | "hack"
   | "srap"
   | "discovery"
-  | "magistral"
   | "postPayment"
   | "activation";
 

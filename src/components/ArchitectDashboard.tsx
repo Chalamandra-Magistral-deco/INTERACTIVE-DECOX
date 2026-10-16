@@ -74,7 +74,6 @@ const ArchitectDashboard: React.FC<ArchitectDashboardProps> = ({
     const getServiceIcon = (type: string) => {
         switch (type) {
             case 'discovery': return 'fa-calendar-check text-yellow-400';
-            case 'magistral': return 'fa-box-open text-purple-400';
             default: return 'fa-gear';
         }
     };
@@ -93,7 +92,7 @@ const ArchitectDashboard: React.FC<ArchitectDashboardProps> = ({
             <div className="max-w-7xl mx-auto relative z-10">
 
                 <img 
-                    src="/images/el-laberinto.jpg" 
+                    src="/images/el-laberinto.svg" 
                     alt="El laberinto no es real. Tú lo diseñas." 
                     className="mx-auto mb-16 w-full max-w-4xl rounded-2xl shadow-2xl shadow-black/50 border-2 border-white/5"
                 />
