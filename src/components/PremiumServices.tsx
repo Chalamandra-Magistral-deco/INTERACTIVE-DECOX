@@ -1,5 +1,6 @@
 import React from "react";
 import { PAYMENT_LINKS } from "@/config/public";
+import { T } from "@/core/Telemetry";
 
 interface PremiumServicesProps {
   onServiceClick: (service: "discovery") => void;
@@ -23,12 +24,24 @@ const PurchaseLink: React.FC<{
     );
   }
 
+  const handlePurchaseClick = () => {
+    T.service.click("discovery");
+    if (typeof window !== "undefined" && window.dataLayer) {
+      window.dataLayer.push({
+        event: "cta_purchase_click",
+        service: "discovery",
+        sub: window.location.hostname.split(".")[0],
+      });
+    }
+  };
+
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
       className={className}
+      onClick={handlePurchaseClick}
     >
       {children}
     </a>
@@ -69,6 +82,7 @@ const PremiumServices: React.FC<PremiumServicesProps> = ({
                 type="button"
                 onClick={() => {
                   playUIClick();
+                  T.service.view("discovery");
                   onServiceClick("discovery");
                 }}
                 className="w-full rounded-lg bg-white/10 py-3 font-bold text-white transition-colors hover:bg-white/20"

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { generatePostPaymentDirective } from "@/services/geminiService";
+import { T } from "@/core/Telemetry";
 import { Archetype, ServiceType } from "@/utils/types";
 
 interface PostPaymentPageProps {
@@ -21,6 +22,9 @@ const PostPaymentPage: React.FC<PostPaymentPageProps> = ({
 
   useEffect(() => {
     let active = true;
+
+    // Tracking de pago verificado (una sola vez por sesión)
+    T.payment.success(serviceName);
 
     const fetchDirective = async (): Promise<void> => {
       setIsLoading(true);

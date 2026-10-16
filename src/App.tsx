@@ -27,6 +27,7 @@ import Header from "@/components/Header";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import ModalManager from "@/components/ModalManager";
 import { startFeedbackLoop, stopFeedbackLoop } from "@/feedback/loop";
+import { T } from "@/core/Telemetry";
 import type { Adaptation } from "@/feedback/analyze";
 
 // ===== LAZY — features que cargan bajo demanda =====
@@ -230,6 +231,9 @@ const App: React.FC = () => {
     setIsDirectiveLoading(true);
     setAiDirective("");
 
+    const aiStartTime = performance.now();
+    T.ai.request();
+
     try {
       const completedHackTitles =
         HACKS_DATA.filter((hack) => completedHacks.has(hack.id))
@@ -255,13 +259,13 @@ const App: React.FC = () => {
         },
       );
 
+      T.ai.success(Math.round(performance.now() - aiStartTime));
       playSound("directive", "G5", "32n");
       playSound("directive", "D6", "32n", getAudioTime() + 0.075);
     } catch (error) {
-      console.error(
-        "Error generating directive:",
-        error instanceof Error ? error.message : "unknown",
-      );
+      const errMsg = error instanceof Error ? error.message : "unknown";
+      console.error("Error generating directive:", errMsg);
+      T.ai.error(errMsg);
       setAiDirective("El Oráculo está nublado. Intenta de nuevo.");
     } finally {
       setIsDirectiveLoading(false);
