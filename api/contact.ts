@@ -101,7 +101,9 @@ export async function POST(request: Request): Promise<Response> {
     });
 
     if (!response.ok) {
-      return json({ error: "Contact delivery failed" }, 502);
+      const errBody = await response.text().catch(() => "");
+      console.error("Contact provider error (status " + response.status + "):", errBody.slice(0, 500));
+      return json({ error: "Contact delivery failed", detail: errBody.slice(0, 500) }, 502);
     }
 
     return json({ ok: true });
