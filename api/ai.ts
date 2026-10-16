@@ -10,7 +10,8 @@ type Operation =
 type Payload = Record<string, unknown>;
 
 const MAX_LENGTH = 3000;
-const MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+const MODEL = process.env.GEMINI_MODEL || "gemini-flash-lite-latest";
+const FALLBACK_MODEL = "gemini-3.1-flash-lite";
 
 // Operaciones que soportan streaming
 const STREAM_OPS: Operation[] = ["strategicDirective", "postPaymentDirective", "hook", "alchemicalCombo"];
@@ -125,28 +126,40 @@ async function handleStream(
   payload: Payload,
 ): Promise<Response> {
   const encoder = new TextEncoder();
+  const models = MODEL === FALLBACK_MODEL ? [MODEL] : [MODEL, FALLBACK_MODEL];
+
   const stream = new ReadableStream({
     async start(controller) {
-      try {
-        const iterator = await ai.models.generateContentStream({
-          model: MODEL,
-          contents: buildPrompt(operation, payload),
-          config: { maxOutputTokens: 220, temperature: 0.8 },
-        });
+      let lastError = "unknown";
+      let succeeded = false;
 
-        for await (const chunk of iterator) {
-          const text = chunk.text ?? "";
-          if (text) {
-            controller.enqueue(encoder.encode(sse({ delta: text })));
+      for (const model of models) {
+        try {
+          const iterator = await ai.models.generateContentStream({
+            model,
+            contents: buildPrompt(operation, payload),
+            config: { maxOutputTokens: 220, temperature: 0.8 },
+          });
+
+          for await (const chunk of iterator) {
+            const text = chunk.text ?? "";
+            if (text) controller.enqueue(encoder.encode(sse({ delta: text })));
           }
+          controller.enqueue(encoder.encode(sse({ done: true })));
+          succeeded = true;
+          break;
+        } catch (error) {
+          lastError = error instanceof Error ? error.message : "unknown";
+          console.error(`AI stream error (${model}):`, lastError);
+          const isRetryable = /UNAVAILABLE|503|404|NOT_FOUND|high demand|no longer available/i.test(lastError);
+          if (!isRetryable) break;
         }
-        controller.enqueue(encoder.encode(sse({ done: true })));
-      } catch (error) {
-        const msg = error instanceof Error ? error.message : "unknown";
-        controller.enqueue(encoder.encode(sse({ error: msg })));
-      } finally {
-        controller.close();
       }
+
+      if (!succeeded) {
+        controller.enqueue(encoder.encode(sse({ error: lastError })));
+      }
+      controller.close();
     },
   });
 
@@ -215,7 +228,6 @@ export async function POST(request: Request): Promise<Response> {
     return handleStream(ai, body.operation, body.payload || {});
   }
 
-  const FALLBACK_MODEL = "gemini-2.5-flash-lite";
   const models = MODEL === FALLBACK_MODEL ? [MODEL] : [MODEL, FALLBACK_MODEL];
   let lastError = "unknown";
 
@@ -224,24 +236,18 @@ export async function POST(request: Request): Promise<Response> {
       const response = await ai.models.generateContent({
         model,
         contents: buildPrompt(body.operation, body.payload || {}),
-        config: {
-          maxOutputTokens: 220,
-          temperature: 0.8,
-        },
+        config: { maxOutputTokens: 220, temperature: 0.8 },
       });
 
       const output = response.text?.trim();
-      if (output) {
-        return json({ text: output });
-      }
+      if (output) return json({ text: output });
       lastError = `Model ${model} returned empty response`;
     } catch (error) {
       lastError = error instanceof Error ? error.message : "unknown";
       console.error(`AI provider error (${model}):`, lastError);
 
-      // Solo reintentar con fallback si fue UNAVAILABLE / 503
-      const isUnavailable = /UNAVAILABLE|503|high demand/i.test(lastError);
-      if (!isUnavailable) break;
+      const isRetryable = /UNAVAILABLE|503|404|NOT_FOUND|high demand|no longer available/i.test(lastError);
+      if (!isRetryable) break;
     }
   }
 
