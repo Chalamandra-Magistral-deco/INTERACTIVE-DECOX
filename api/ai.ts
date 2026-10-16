@@ -215,24 +215,35 @@ export async function POST(request: Request): Promise<Response> {
     return handleStream(ai, body.operation, body.payload || {});
   }
 
-  try {
-    const response = await ai.models.generateContent({
-      model: MODEL,
-      contents: buildPrompt(body.operation, body.payload || {}),
-      config: {
-        maxOutputTokens: 220,
-        temperature: 0.8,
-      },
-    });
+  const FALLBACK_MODEL = "gemini-2.5-flash-lite";
+  const models = MODEL === FALLBACK_MODEL ? [MODEL] : [MODEL, FALLBACK_MODEL];
+  let lastError = "unknown";
 
-    const output = response.text?.trim();
-    if (!output) {
-      return json({ error: "AI returned an empty response" }, 502);
+  for (const model of models) {
+    try {
+      const response = await ai.models.generateContent({
+        model,
+        contents: buildPrompt(body.operation, body.payload || {}),
+        config: {
+          maxOutputTokens: 220,
+          temperature: 0.8,
+        },
+      });
+
+      const output = response.text?.trim();
+      if (output) {
+        return json({ text: output });
+      }
+      lastError = `Model ${model} returned empty response`;
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : "unknown";
+      console.error(`AI provider error (${model}):`, lastError);
+
+      // Solo reintentar con fallback si fue UNAVAILABLE / 503
+      const isUnavailable = /UNAVAILABLE|503|high demand/i.test(lastError);
+      if (!isUnavailable) break;
     }
-
-    return json({ text: output });
-  } catch (error) {
-    console.error("AI provider error:", error instanceof Error ? error.message : "unknown");
-    return json({ error: "AI generation failed" }, 502);
   }
+
+  return json({ error: "AI generation failed", detail: lastError }, 502);
 }
