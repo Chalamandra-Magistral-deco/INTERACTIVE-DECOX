@@ -9,3 +9,8 @@
 node_modules
 dist
 .env*
+
+# Backups locales
+*.backup
+*.bak
+*.bak2
