@@ -1,4 +1,3 @@
-import { readJsonBody, isJsonObject } from "../src/server/json";
 type ContactPayload = {
   name: string;
   email: string;
@@ -37,11 +36,21 @@ export async function POST(request: Request): Promise<Response> {
     return json({ error: "Contact delivery is not configured" }, 503);
   }
 
-  const parsed = await readJsonBody(request, 16 * 1024);
-  if (!parsed.ok || !isJsonObject(parsed.value)) {
+  let rawText: string;
+  try {
+    rawText = await request.text();
+  } catch {
     return json({ error: "Invalid JSON body" }, 400);
   }
-  const body = parsed.value as Partial<ContactPayload>;
+  if (rawText.length > 16 * 1024) {
+    return json({ error: "Request too large" }, 413);
+  }
+  let body: Partial<ContactPayload>;
+  try {
+    body = JSON.parse(rawText);
+  } catch {
+    return json({ error: "Invalid JSON body" }, 400);
+  }
 
   const contact = {
     name: clean(body.name, 120),
