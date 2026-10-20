@@ -17,7 +17,7 @@ const initialFormData: FormData = {
   email: "",
   phone: "",
   objective: "",
-  service: "Transformación Total",
+  service: "Consulta general",
   website: "",
 };
 
@@ -195,8 +195,9 @@ const ContactForm: React.FC = () => {
                 onChange={handleChange}
                 aria-label="Servicio de Interés"
               >
-                <option>Transformación Total</option>
-                <option>Sesión Descubrimiento</option>
+                <option value="Consulta general">Consulta general</option>
+                <option value="Sesión de Descubrimiento">Sesión de Descubrimiento</option>
+                <option value="Solución para empresas y equipos">Solución para empresas y equipos</option>
               </select>
             </div>
           </div>
