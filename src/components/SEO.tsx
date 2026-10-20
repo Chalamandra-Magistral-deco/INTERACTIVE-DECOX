@@ -16,9 +16,9 @@ interface SEOProps {
  * Use this in pages or modals to update the document title and meta tags.
  */
 const SEO: React.FC<SEOProps> = ({
-  title = "Chalamandra Magistral | Sistema Operativo del 1%",
-  description = "Domina el Grimorio Táctico: fusión cognitiva, modelos mentales y ventaja estratégica. Decodifica tu realidad y desmantela tus límites con Chalamandra Magistral.",
-  keywords = "cognitive fusion, mental models, strategic advantage, alto rendimiento, hacks cognitivos, chalamandra magistral",
+  title = "Interactive DecoX | Chalamandra Magistral",
+  description = "Explora tu arquetipo cognitivo, practica Hacks Magistrales y convierte ideas en acciones con Interactive DecoX, la experiencia digital de Chalamandra Magistral.",
+  keywords = "Interactive DecoX, Chalamandra Magistral, diagnóstico cognitivo, Hacks Magistrales, metodología estratégica, servicios para empresas",
   canonical = "https://interactive.chalamandramagistral.com",
   ogType = "website",
   ogImage = "https://interactive.chalamandramagistral.com/og-image.jpg",
