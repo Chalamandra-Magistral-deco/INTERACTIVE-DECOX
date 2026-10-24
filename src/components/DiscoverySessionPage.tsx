@@ -104,7 +104,7 @@ const DiscoverySessionPage: React.FC = () => {
               <p className="mb-3 text-xs font-black uppercase tracking-wider text-yellow-300">
                 02 · Decodifica
               </p>
-              <h4 className="mb-2 font-bold text-white">Sesión en vivo · 90 min</h4>
+              <h4 className="mb-2 font-bold text-white">Sesión en vivo</h4>
               <p className="text-sm leading-relaxed text-gray-400">
                 Exploramos tu situación, los patrones relevantes, las
                 restricciones y el punto crítico que conviene atender.
