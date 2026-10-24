@@ -12,9 +12,9 @@
   <meta name="theme-color" content="#0a0a0a" />
   <meta
     name="description"
-    content="Chalamandra Magistral: sistema operativo para decodificar tu arquetipo cognitivo, dominar hacks mentales y desarrollar ventaja estratégica."
+    content="Interactive DecoX: explora tu arquetipo cognitivo, practica Hacks Magistrales y convierte ideas en acciones con Chalamandra Magistral."
   />
-  <title>Chalamandra Magistral | Sistema Operativo del 1%</title>
+  <title>Interactive DecoX | Chalamandra Magistral</title>
   <link
     rel="icon"
     href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧠</text></svg>"
@@ -71,23 +71,102 @@
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-53TVD9VW" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
 
-  <!-- DECOX GLOBAL NAV - INICIO -->
-  <style>#decox-nav{position:sticky;top:0;z-index:9999;background:#0a0a0a;color:#fff;padding:10px 16px;display:flex;gap:12px;font-family:system-ui;font-size:14px}#decox-nav a{color:#fff;text-decoration:none;opacity:.8}#decox-nav a:hover{opacity:1}#decox-cta{position:fixed;bottom:0;left:0;right:0;background:#111;color:#fff;padding:12px;text-align:center;z-index:9999}#decox-cta a{background:#fff;color:#000;padding:6px 12px;border-radius:20px;margin-left:8px;text-decoration:none;font-weight:700}</style>
+  <!-- Navegación compartida del ecosistema Chalamandra Magistral -->
+  <style>
+    html { scroll-padding-top: 110px; }
+    @media (prefers-reduced-motion: no-preference) {
+      html { scroll-behavior: smooth; }
+    }
+    #decox-nav {
+      position: sticky; top: 0; z-index: 9999; box-sizing: border-box;
+      display: flex; align-items: center; justify-content: space-between; gap: 18px;
+      padding: 12px clamp(16px, 3vw, 36px);
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background: rgba(8,10,14,.96); color: #fff;
+      backdrop-filter: blur(16px);
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+    }
+    #decox-nav .decox-brand {
+      display: flex; flex-direction: column; gap: 3px; flex-shrink: 0;
+      color: #fff; text-decoration: none; font-size: 13px; font-weight: 900;
+      letter-spacing: .08em; text-transform: uppercase;
+    }
+    #decox-nav .decox-brand small { color: #facc15; font-size: 10px; letter-spacing: .16em; }
+    #decox-nav .decox-links {
+      display: flex; align-items: center; justify-content: flex-end;
+      flex-wrap: wrap; gap: 5px;
+    }
+    #decox-nav a, #decox-nav summary {
+      display: inline-flex; align-items: center; border-radius: 9px;
+      padding: 9px 10px; color: #d1d5db; cursor: pointer;
+      font-size: 12px; font-weight: 700; line-height: 1.2; text-decoration: none;
+      transition: color .15s ease, background .15s ease;
+    }
+    #decox-nav a:hover, #decox-nav summary:hover,
+    #decox-nav a:focus-visible, #decox-nav summary:focus-visible {
+      color: #fff; background: rgba(255,255,255,.08); outline: none;
+    }
+    #decox-nav .decox-products { position: relative; }
+    #decox-nav .decox-products summary { list-style: none; }
+    #decox-nav .decox-products summary::-webkit-details-marker { display: none; }
+    #decox-nav .decox-products summary::after { content: "⌄"; margin-left: 7px; color: #facc15; }
+    #decox-nav .decox-menu-panel {
+      position: absolute; top: calc(100% + 8px); right: 0; z-index: 10000;
+      display: grid; min-width: 220px; padding: 8px;
+      border: 1px solid rgba(255,255,255,.12); border-radius: 14px;
+      background: #111318; box-shadow: 0 18px 45px rgba(0,0,0,.45);
+    }
+    #decox-nav .decox-menu-panel a { justify-content: flex-start; }
+    #decox-nav .decox-menu-panel a[aria-current="page"] { color: #facc15; background: rgba(250,204,21,.08); }
+    #decox-nav .decox-primary {
+      margin-left: 4px; background: #facc15; color: #111827;
+      font-weight: 900; padding: 11px 14px;
+    }
+    #decox-nav .decox-primary:hover, #decox-nav .decox-primary:focus-visible {
+      background: #fde047; color: #111827;
+    }
+    @media (max-width: 1100px) {
+      #decox-nav { align-items: flex-start; flex-direction: column; gap: 8px; }
+      #decox-nav .decox-links { justify-content: flex-start; width: 100%; }
+    }
+    @media (max-width: 640px) {
+      html { scroll-padding-top: 160px; }
+      #decox-nav { padding: 12px 14px; }
+      #decox-nav .decox-links { gap: 3px; }
+      #decox-nav a, #decox-nav summary { padding: 9px; font-size: 12px; }
+      #decox-nav .decox-menu-panel { position: static; min-width: 0; margin: 2px 0 4px; }
+      #decox-nav .decox-primary { margin-left: 0; }
+    }
+  </style>
 
-  <nav id="decox-nav" style="background:#0b0f19; color:#fff; padding:10px 20px; font-family:system-ui, -apple-system, sans-serif; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; border-bottom:1px solid #1f293d; font-size:14px; position:sticky; top:0; z-index:9999;">
-    <div style="font-weight:700; color:#38bdf8; letter-spacing:0.5px;">CHALAMANDRA MAGISTRAL DECOX</div>
-    <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
-      <a href="https://www.chalamandramagistral.com/" style="color:#e2e8f0; text-decoration:none;">Hub</a>
-      <a href="https://systemdecode.chalamandramagistral.com/" style="color:#e2e8f0; text-decoration:none;">SystemDecode</a>
-      <a href="https://oraculo.chalamandramagistral.com/" style="color:#e2e8f0; text-decoration:none;">Oráculo</a>
-      <a href="https://pirinola.chalamandramagistral.com/" style="color:#e2e8f0; text-decoration:none;">Pirinola</a>
-      <a href="https://tricentric.chalamandramagistral.com/" style="color:#e2e8f0; text-decoration:none;">Tricentric</a>
-      <a href="https://interactive.chalamandramagistral.com/" style="color:#e2e8f0; text-decoration:none;">Interactive</a>
-      <a href="https://triada.chalamandramagistral.com/" style="color:#e2e8f0; text-decoration:none;">Triada</a>
-      <a href="https://decodificadorachalamandramagis.blogspot.com/" target="_blank" rel="noopener" style="color:#38bdf8; text-decoration:none; font-weight:600;">Blog</a>
+  <nav id="decox-nav" aria-label="Navegación del ecosistema Chalamandra Magistral">
+    <a class="decox-brand" href="https://www.chalamandramagistral.com/" target="_blank" rel="noopener noreferrer">
+      Chalamandra Magistral
+      <small>DECOX · ECOSISTEMA</small>
+    </a>
+    <div class="decox-links">
+      <a href="#metodologia">Metodología</a>
+      <a href="#diagnostico">Diagnóstico</a>
+      <a href="#productos">Hacks y herramientas</a>
+      <a href="#servicios">Servicios</a>
+      <details class="decox-products">
+        <summary>Suite DecoX</summary>
+        <div class="decox-menu-panel">
+          <a href="https://systemdecode.chalamandramagistral.com/" target="_blank" rel="noopener noreferrer">SystemDecode</a>
+          <a href="https://interactive.chalamandramagistral.com/" aria-current="page">Interactive DecoX · Actual</a>
+          <a href="https://tricentric.chalamandramagistral.com/" target="_blank" rel="noopener noreferrer">Tricentric</a>
+          <a href="https://triada.chalamandramagistral.com/" target="_blank" rel="noopener noreferrer">Triada</a>
+          <a href="https://oraculo.chalamandramagistral.com/" target="_blank" rel="noopener noreferrer">Oráculo</a>
+          <a href="https://pirinola.chalamandramagistral.com/" target="_blank" rel="noopener noreferrer">Pirinola</a>
+          <a href="https://www.chalamandramagistral.com/sistema?utm_source=interactive&utm_medium=nav&utm_campaign=entrega_1_consolidacion_comercial" target="_blank" rel="noopener noreferrer">Mapa SRAP</a>
+        </div>
+      </details>
+      <a href="https://decodificadorachalamandramagis.blogspot.com/" target="_blank" rel="noopener noreferrer">Blog y recursos</a>
+      <a class="decox-primary" href="https://www.chalamandramagistral.com/contact.html?interes=consultoria-b2b&utm_source=interactive&utm_medium=referral&utm_campaign=entrega_1_consolidacion_comercial&utm_content=nav" target="_blank" rel="noopener noreferrer">Hablar con la empresa <span aria-hidden="true" style="margin-left:6px">↗</span></a>
     </div>
   </nav>
-  <!-- DECOX GLOBAL NAV - FIN -->
+  <!-- Fin de navegación compartida -->
+
 
   <div id="root"></div>
 
@@ -106,10 +185,53 @@
 
   <script type="module" src="/src/index.tsx"></script>
 
-  <div id="decox-cta">¿Quieres tu Mapa SRAP? <a href="https://www.chalamandramagistral.com/sistema?utm_source=interactive&utm_medium=cta_global">Generar en Principal</a></div>
-
   <script>
-  (function(){window.dataLayer=window.dataLayer||[];const h=window.location.hostname;const sub=h.split('.')[0]||'www';document.addEventListener('DOMContentLoaded',()=>{const n=document.getElementById('decox-nav');if(n){n.addEventListener('click',e=>{const l=e.target.closest('a');if(l){let d='external';try{const u=new URL(l.href);const p=u.hostname.split('.');d=p.length>2?p[0]:u.hostname}catch(err){}window.dataLayer.push({'event':'nav_click','source_subdomain':sub,'destination_subdomain':d,'link_url':l.href,'link_text':l.textContent.trim()})}});const c=document.getElementById('decox-cta');if(c){c.addEventListener('click',e=>{const l=e.target.closest('a');if(l){window.dataLayer.push({'event':'cta_conversion_click','source_subdomain':sub,'target_url':l.href})}})}});window.trackModuleEngagement=function(m,a,x={}){window.dataLayer.push(Object.assign({'event':'module_engagement','module_name':m,'action_type':a,'source_subdomain':sub},x))};})();
+    (function () {
+      window.dataLayer = window.dataLayer || [];
+      var hostname = window.location.hostname;
+      var parts = hostname.split(".");
+      var sourceSubdomain = parts.length > 2 ? parts[0] : hostname;
+      var nav = document.getElementById("decox-nav");
+
+      if (nav) {
+        nav.addEventListener("click", function (event) {
+          var link = event.target.closest("a");
+          if (!link) return;
+          var destination = "internal";
+          try {
+            var targetUrl = new URL(link.href, window.location.href);
+            var targetParts = targetUrl.hostname.split(".");
+            destination = targetUrl.hostname === window.location.hostname
+              ? "internal"
+              : (targetParts.length > 2 ? targetParts[0] : targetUrl.hostname);
+          } catch (error) {
+            destination = "unknown";
+          }
+
+          window.dataLayer.push({
+            event: link.classList.contains("decox-primary") ? "corporate_lead_click" : "nav_click",
+            source_subdomain: sourceSubdomain,
+            destination_subdomain: destination,
+            link_url: link.href,
+            link_text: link.textContent.trim(),
+            placement: "global_navigation"
+          });
+        });
+      }
+
+      window.trackModuleEngagement = function (moduleName, actionType, extra) {
+        var eventData = {
+          event: "module_engagement",
+          module_name: moduleName,
+          action_type: actionType,
+          source_subdomain: sourceSubdomain
+        };
+        if (extra && typeof extra === "object") {
+          Object.keys(extra).forEach(function (key) { eventData[key] = extra[key]; });
+        }
+        window.dataLayer.push(eventData);
+      };
+    })();
   </script>
 </body>
 </html>
