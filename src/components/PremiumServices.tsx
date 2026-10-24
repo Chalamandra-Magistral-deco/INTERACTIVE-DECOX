@@ -50,7 +50,6 @@ const PurchaseLink: React.FC<{
 };
 
 const PremiumServices: React.FC<PremiumServicesProps> = ({
-  onServiceClick,
   playUIClick,
 }) => (
   <section id="servicios" className="scroll-mt-24 bg-gradient-to-b from-black via-gray-950 to-black px-6 py-20">
@@ -79,25 +78,25 @@ const PremiumServices: React.FC<PremiumServicesProps> = ({
             $27 <span className="text-base font-bold text-gray-400">USD</span>
           </p>
           <p className="mb-6 leading-relaxed text-gray-300">
-            Una sesión para explorar tu arquetipo cognitivo, clarificar tu objetivo y trazar una hoja de ruta inicial.
+            Una experiencia web guiada más una sesión en vivo para explorar tu
+            situación, clarificar el objetivo y definir próximos pasos.
           </p>
           <ul className="mb-8 space-y-2 text-sm text-gray-300">
-            <li>✓ Diagnóstico y conversación guiada</li>
-            <li>✓ Clarificación del objetivo prioritario</li>
-            <li>✓ Próximos pasos iniciales</li>
+            <li>✓ Recorrido web con rutas diferenciadas</li>
+            <li>✓ Sesión en vivo de 90 minutos</li>
+            <li>✓ Síntesis del reto y próximos pasos iniciales</li>
           </ul>
           <div className="mt-auto space-y-3">
-            <button
-              type="button"
+            <a
+              href="/sesion-descubrimiento"
               onClick={() => {
                 playUIClick();
                 T.service.view("discovery");
-                onServiceClick("discovery");
               }}
-              className="w-full rounded-xl border border-white/15 bg-white/5 py-3 font-bold text-white transition-colors hover:bg-white/10"
+              className="block w-full rounded-xl border border-white/15 bg-white/5 py-3 text-center font-bold text-white transition-colors hover:bg-white/10"
             >
               Ver detalles de la sesión
-            </button>
+            </a>
             <PurchaseLink
               href={PAYMENT_LINKS.discovery}
               className="block w-full rounded-xl bg-yellow-400 py-3 text-center font-black text-black shadow-lg shadow-yellow-500/20 transition-colors hover:bg-yellow-300"
@@ -115,7 +114,8 @@ const PremiumServices: React.FC<PremiumServicesProps> = ({
             Aplicación organizacional
           </h3>
           <p className="mb-6 leading-relaxed text-gray-300">
-            ¿Quieres llevar estas metodologías a tu empresa? Comparte el contexto, los objetivos y el reto que quieres abordar para conversar con Chalamandra Magistral sobre el siguiente paso.
+            ¿Quieres llevar estas metodologías a tu empresa? Comparte el contexto,
+            los objetivos y el reto para conversar sobre el alcance adecuado.
           </p>
           <div className="mt-auto space-y-3">
             <a
@@ -149,5 +149,4 @@ const PremiumServices: React.FC<PremiumServicesProps> = ({
     </div>
   </section>
 );
-
 export default PremiumServices;
