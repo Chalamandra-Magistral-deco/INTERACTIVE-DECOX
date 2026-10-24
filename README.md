@@ -56,6 +56,7 @@ Copia `.env.example` a tu entorno de desarrollo o configura las variables en la 
 ### Públicas
 
 - `VITE_STRIPE_DISCOVERY_URL`
+- `VITE_DISCOVERY_APP_URL` (URL HTTPS de Cloud Run, configurar sólo después de validar el despliegue)
 - `VITE_STRIPE_MAGISTRAL_URL`
 - `VITE_WHATSAPP_NUMBER`
 - `VITE_WHATSAPP_MESSAGE`
