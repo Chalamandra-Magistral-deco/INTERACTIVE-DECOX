@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { generatePostPaymentDirective } from "@/services/geminiService";
+import { DISCOVERY_APP_URL } from "@/config/public";
 import { T } from "@/core/Telemetry";
 import { Archetype, ServiceType } from "@/utils/types";
 
@@ -47,20 +48,48 @@ const PostPaymentPage: React.FC<PostPaymentPageProps> = ({
   }, [serviceName, archetype]);
 
   const renderDeliveryAction = (): React.ReactNode => (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <p className="text-lg text-gray-300">
-        Tu pago fue verificado. El siguiente paso es agendar tu sesión de
-        descubrimiento.
+        Tu compra fue verificada. La Sesión de Descubrimiento es una experiencia
+        autoguiada de cinco fases que termina con tu Ruta Inicial y un informe
+        ejecutivo descargable en PDF/A4 y JSON.
       </p>
-      <a
-        href="https://calendly.com/chalamandra/discovery"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-block rounded-xl bg-yellow-500 px-8 py-4 font-black text-black shadow-xl transition-all hover:scale-105 hover:bg-yellow-400"
-      >
-        <i className="fa-solid fa-calendar-days mr-2" />
-        AGENDAR SESIÓN AHORA
-      </a>
+
+      {DISCOVERY_APP_URL ? (
+        <a
+          href={DISCOVERY_APP_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block rounded-xl bg-yellow-500 px-8 py-4 font-black text-black shadow-xl transition-all hover:scale-105 hover:bg-yellow-400"
+        >
+          <i className="fa-solid fa-compass mr-2" />
+          ABRIR MI SESIÓN INTERACTIVA
+        </a>
+      ) : (
+        <div
+          role="status"
+          className="rounded-xl border border-amber-400/30 bg-amber-400/10 px-5 py-4 text-left text-sm text-amber-100"
+        >
+          La URL de entrega de la aplicación aún no está configurada. Antes de
+          activar ventas, define VITE_DISCOVERY_APP_URL con la dirección pública
+          verificada de la Sesión de Descubrimiento.
+        </div>
+      )}
+
+      <div className="border-t border-gray-700 pt-4">
+        <p className="mb-3 text-sm text-gray-400">
+          ¿También necesitas acompañamiento humano? Puedes agendarlo por separado.
+        </p>
+        <a
+          href="https://calendly.com/chalamandra/discovery"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block rounded-xl border border-white/15 px-6 py-3 font-bold text-white transition-colors hover:bg-white/10"
+        >
+          <i className="fa-solid fa-calendar-days mr-2" />
+          AGENDAR ACOMPAÑAMIENTO OPCIONAL
+        </a>
+      </div>
     </div>
   );
 
