@@ -313,22 +313,6 @@ const GrimorioTacticoSection: React.FC = () => {
                                     </AnimatePresence>
                                 </div>
                             </div>
-
-                            {/* CTA Card */}
-                            <div className="bg-emerald-500/5 border border-emerald-500/20 p-8 rounded-[2.5rem] space-y-6 text-center">
-                                <h4 className="text-xl font-black text-white uppercase tracking-tighter">¿Buscas la Maestría Total?</h4>
-                                <p className="text-sm text-gray-400 leading-relaxed">
-                                    En la Sesión Descubrimiento, calibramos tus ingredientes para forjar los combos que realmente desintegran tus limitaciones.
-                                </p>
-                                <a 
-                                    href={PAYMENT_LINKS.discovery}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="block w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl transition-all shadow-xl"
-                                >
-                                    AGENDAR CALIBRACIÓN ($27 USD)
-                                </a>
-                            </div>
                         </div>
                     </div>
                 </div>
