@@ -24,19 +24,6 @@ const DiscoverySessionPage: React.FC = () => {
 
   return (
     <div ref={componentRef} className="space-y-12 pb-12">
-      <div className="space-y-6 text-center">
-        <p className="reveal-on-scroll text-sm font-bold uppercase tracking-[0.25em] text-yellow-300">
-          Chalamandra Magistral DecoX
-        </p>
-        <h2 className="reveal-on-scroll text-4xl font-black tracking-tighter text-white md:text-6xl">
-          SESIÓN DE DESCUBRIMIENTO
-        </h2>
-        <p className="reveal-on-scroll mx-auto max-w-3xl text-xl font-semibold leading-relaxed text-gray-300 md:text-2xl">
-          Una sesión individual de 90 minutos para entender tu situación,
-          identificar el punto crítico y definir una ruta inicial de acción.
-        </p>
-      </div>
-
       <div className="reveal-on-scroll grid grid-cols-1 gap-6 md:grid-cols-3">
         {[
           {
