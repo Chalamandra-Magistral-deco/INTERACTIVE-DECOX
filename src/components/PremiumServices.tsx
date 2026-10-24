@@ -1,5 +1,5 @@
 import React from "react";
-import { PAYMENT_LINKS } from "@/config/public";
+import { DISCOVERY_APP_URL, PAYMENT_LINKS } from "@/config/public";
 import { T } from "@/core/Telemetry";
 
 interface PremiumServicesProps {
@@ -11,15 +11,17 @@ const PurchaseLink: React.FC<{
   href: string;
   className: string;
   children: React.ReactNode;
-}> = ({ href, className, children }) => {
+  disabledLabel: string;
+  disabledReason: string;
+}> = ({ href, className, children, disabledLabel, disabledReason }) => {
   if (!href) {
     return (
       <span
-        className={`${className} cursor-not-allowed opacity-40`}
+        className="block w-full rounded-lg bg-yellow-500 py-3 font-black text-black opacity-50 cursor-not-allowed"
         aria-disabled="true"
-        title="Checkout pendiente de configuración"
+        title={disabledReason}
       >
-        Checkout no configurado
+        {disabledLabel}
       </span>
     );
   }
@@ -73,8 +75,9 @@ const PremiumServices: React.FC<PremiumServicesProps> = ({
               $27 <span className="text-lg font-semibold text-gray-400">USD</span>
             </p>
             <p className="flex-grow text-gray-300">
-              Una experiencia web interactiva para explorar tu situación,
-              identificar puntos críticos y trazar una ruta inicial.
+              Un diagnóstico autoguiado en cinco fases: Explorar, Decodificar,
+              Aplicar un Hack oficial, Orientar con SRAP y cerrar con una Ruta Inicial.
+              Incluye informe ejecutivo descargable en PDF/A4 y JSON.
             </p>
 
             <div className="mt-8 space-y-3">
@@ -91,7 +94,17 @@ const PremiumServices: React.FC<PremiumServicesProps> = ({
               </button>
 
               <PurchaseLink
-                href={PAYMENT_LINKS.discovery}
+                href={PAYMENT_LINKS.discovery && DISCOVERY_APP_URL ? PAYMENT_LINKS.discovery : ""}
+                disabledLabel={
+                  !PAYMENT_LINKS.discovery
+                    ? "CHECKOUT PENDIENTE DE CONFIGURACIÓN"
+                    : "ENTREGA INTERACTIVA PENDIENTE"
+                }
+                disabledReason={
+                  !PAYMENT_LINKS.discovery
+                    ? "Checkout pendiente de configuración"
+                    : "Configura VITE_DISCOVERY_APP_URL después de desplegar y verificar la aplicación entregable"
+                }
                 className="block w-full rounded-lg bg-yellow-500 py-3 font-black text-black shadow-lg transition-colors hover:bg-yellow-400"
               >
                 ADQUIRIR AHORA

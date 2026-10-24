@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { PAYMENT_LINKS } from "@/config/public";
+import { DISCOVERY_APP_URL, PAYMENT_LINKS } from "@/config/public";
 
 const DiscoverySessionPage: React.FC = () => {
   const componentRef = useRef<HTMLDivElement>(null);
@@ -24,22 +24,32 @@ const DiscoverySessionPage: React.FC = () => {
 
   return (
     <div ref={componentRef} className="space-y-12 pb-12">
-      <div className="reveal-on-scroll grid grid-cols-1 gap-6 md:grid-cols-3">
+      <div className="reveal-on-scroll grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
         {[
           {
             title: "01 · Explorar",
             icon: "fa-magnifying-glass",
-            desc: "Aclaramos tu contexto, objetivo y el problema que necesitas resolver.",
+            desc: "Define el objetivo, la situación observable, la fricción y las restricciones reales.",
           },
           {
             title: "02 · Decodificar",
             icon: "fa-code-branch",
-            desc: "Analizamos patrones, restricciones y el nodo que merece atención prioritaria.",
+            desc: "Distingue patrones, hipótesis, incentivos e incertidumbres que necesitan evidencia.",
           },
           {
-            title: "03 · Orientar",
+            title: "03 · Aplicar un Hack",
+            icon: "fa-wand-magic-sparkles",
+            desc: "Selecciona un Hack oficial y completa su plantilla metodológica aplicada a tu caso.",
+          },
+          {
+            title: "04 · Orientar con SRAP",
+            icon: "fa-compass",
+            desc: "Conecta las condiciones reales, el patrón reconocido, la acción inmediata y el criterio de pausa.",
+          },
+          {
+            title: "05 · Ruta Inicial",
             icon: "fa-route",
-            desc: "Definimos próximos pasos y una ruta inicial coherente con tu situación.",
+            desc: "Cierra con un informe ejecutivo descargable en PDF/A4 y JSON.",
           },
         ].map((step, index) => (
           <div
@@ -61,9 +71,10 @@ const DiscoverySessionPage: React.FC = () => {
           ¿Qué obtienes?
         </h3>
         <p className="mx-auto max-w-2xl leading-relaxed text-gray-300">
-          Claridad sobre el problema que estás abordando, una lectura
-          estructurada de los factores relevantes y próximos pasos para decidir
-          cómo avanzar. La sesión se enfoca en tu caso concreto.
+          Una experiencia autoguiada de cinco fases para Personas u Organizaciones.
+          La síntesis local funciona sin depender obligatoriamente de una llamada de IA;
+          el resultado es una Ruta Inicial fundamentada en tus respuestas, con exportación
+          del informe ejecutivo en PDF/A4 y JSON.
         </p>
       </div>
 
@@ -76,7 +87,7 @@ const DiscoverySessionPage: React.FC = () => {
             $27 <span className="text-xl text-gray-400">USD</span>
           </p>
 
-          {PAYMENT_LINKS.discovery ? (
+          {PAYMENT_LINKS.discovery && DISCOVERY_APP_URL ? (
             <a
               href={PAYMENT_LINKS.discovery}
               target="_blank"
@@ -86,12 +97,23 @@ const DiscoverySessionPage: React.FC = () => {
               ADQUIRIR SESIÓN
             </a>
           ) : (
-            <span className="inline-block cursor-not-allowed rounded-2xl bg-yellow-500 px-10 py-5 text-lg font-black text-black opacity-40">
-              CHECKOUT PENDIENTE DE CONFIGURACIÓN
+            <span
+              className="inline-block cursor-not-allowed rounded-2xl bg-yellow-500 px-10 py-5 text-lg font-black text-black opacity-40"
+              aria-disabled="true"
+              title={
+                !PAYMENT_LINKS.discovery
+                  ? "Checkout pendiente de configuración"
+                  : "Configura VITE_DISCOVERY_APP_URL después de desplegar y verificar la aplicación"
+              }
+            >
+              {!PAYMENT_LINKS.discovery
+                ? "CHECKOUT PENDIENTE DE CONFIGURACIÓN"
+                : "ENTREGA INTERACTIVA PENDIENTE"}
             </span>
           )}
           <p className="mt-5 text-xs text-gray-500">
-            Tras confirmar el pago podrás continuar con la agenda de tu sesión.
+            La compra se habilitará cuando el checkout y la URL pública de entrega estén configurados.
+            Después de verificar el pago, podrás abrir la experiencia de cinco fases y descargar el informe.
           </p>
         </div>
       </div>

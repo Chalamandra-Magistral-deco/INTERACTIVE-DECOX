@@ -124,3 +124,20 @@ Configura además el webhook de Stripe apuntando a:
 `/api/stripe-webhook`
 
 y usa una URL de fulfillment duradera si existe un sistema externo que deba registrar o provisionar las compras.
+
+
+## Sesión de Descubrimiento — integración del entregable
+
+El sitio comercial conserva el marketing, el catálogo de Interactive y el checkout. La aplicación autónoma SESION-DESCUBRIMIENTO-DECOX ejecuta el diagnóstico completo en cinco fases y genera el informe PDF/A4 + JSON.
+
+Flujo de entrega:
+1. El botón comercial sólo habilita la compra cuando existen VITE_STRIPE_DISCOVERY_URL y VITE_DISCOVERY_APP_URL.
+2. Stripe devuelve al sitio con session_id; /api/verify-payment confirma la sesión pagada y el precio configurado en el servidor.
+3. La página de pago verificado ofrece ABRIR MI SESIÓN INTERACTIVA, apuntando a VITE_DISCOVERY_APP_URL.
+4. La sesión genera la Ruta Inicial y el informe; Calendly se conserva únicamente como opción de acompañamiento humano.
+
+VITE_DISCOVERY_APP_URL es configuración pública, no un secreto. Debe tener la URL real de la aplicación desplegada y probada. No habilites ventas de la experiencia autoguiada mientras no esté configurada.
+
+La sesión incluye un espejo versionado del catálogo oficial en INTERACTIVE-DECOX/src/utils/constants.ts. Al cambiar Hacks, Poderes, plantillas o arquetipos, sincroniza SESION-DESCUBRIMIENTO-DECOX/src/data/interactiveCatalog.ts y valida los conteos antes de liberar.
+
+**Nota de acceso:** el enlace post-pago realiza la entrega, pero la aplicación autónoma aún no valida un derecho de compra ni tiene cuentas de cliente. Mientras no exista autenticación o un permiso firmado de acceso, la URL de la aplicación es pública. El enlace de entrega no debe presentarse como control de acceso.

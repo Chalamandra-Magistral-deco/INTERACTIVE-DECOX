@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 
-import { generatePostPaymentDirective } from "@/services/geminiService";
+import { DISCOVERY_APP_URL } from "@/config/public";
 import { T } from "@/core/Telemetry";
+import { generatePostPaymentDirective } from "@/services/geminiService";
 import { Archetype, ServiceType } from "@/utils/types";
 
 interface PostPaymentPageProps {
@@ -21,11 +22,10 @@ const PostPaymentPage: React.FC<PostPaymentPageProps> = ({
 }) => {
   const [directive, setDirective] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const discoveryAppUrl = import.meta.env.VITE_DISCOVERY_APP_URL?.trim() || "";
   const discoveryHandoffUrl = (() => {
-    if (!discoveryAppUrl || !checkoutSessionId) return null;
+    if (!DISCOVERY_APP_URL || !checkoutSessionId) return null;
     try {
-      const target = new URL(discoveryAppUrl);
+      const target = new URL(DISCOVERY_APP_URL);
       target.searchParams.set("session_id", checkoutSessionId);
       return target.toString();
     } catch {
@@ -60,33 +60,48 @@ const PostPaymentPage: React.FC<PostPaymentPageProps> = ({
   }, [serviceName, archetype]);
 
   const renderDeliveryAction = (): React.ReactNode => (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <p className="text-lg text-gray-300">
-        Tu pago fue verificado. El siguiente paso es agendar tu sesión de
-        descubrimiento.
+        Tu compra fue verificada. La Sesión de Descubrimiento es una experiencia
+        autoguiada de cinco fases que termina con tu Ruta Inicial y un informe
+        ejecutivo descargable en PDF/A4 y JSON.
       </p>
+
       {discoveryHandoffUrl ? (
         <a
           href={discoveryHandoffUrl}
-          className="inline-block rounded-xl bg-green-500 px-8 py-4 font-black text-black shadow-xl transition-all hover:scale-105 hover:bg-green-400"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block rounded-xl bg-yellow-500 px-8 py-4 font-black text-black shadow-xl transition-all hover:scale-105 hover:bg-yellow-400"
         >
-          <i className="fa-solid fa-arrow-up-right-from-square mr-2" />
-          ABRIR SESIÓN DE DESCUBRIMIENTO
+          <i className="fa-solid fa-compass mr-2" />
+          ABRIR MI SESIÓN INTERACTIVA
         </a>
       ) : (
-        <p className="text-sm text-amber-300">
-          El acceso interactivo aún no está configurado. Contacta al equipo para recibir tu enlace de entrega.
-        </p>
+        <div
+          role="status"
+          className="rounded-xl border border-amber-400/30 bg-amber-400/10 px-5 py-4 text-left text-sm text-amber-100"
+        >
+          {!DISCOVERY_APP_URL
+            ? "La URL de entrega aún no está configurada. Antes de activar ventas, define VITE_DISCOVERY_APP_URL con la URL pública verificada de la Sesión de Descubrimiento."
+            : "No se encontró el identificador de tu compra para abrir la sesión. Regresa desde la confirmación de pago o contacta al equipo para revisar tu acceso."}
+        </div>
       )}
-      <a
-        href="https://calendly.com/chalamandra/discovery"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-block rounded-xl bg-yellow-500 px-8 py-4 font-black text-black shadow-xl transition-all hover:scale-105 hover:bg-yellow-400"
-      >
-        <i className="fa-solid fa-calendar-days mr-2" />
-        AGENDAR SESIÓN AHORA
-      </a>
+
+      <div className="border-t border-gray-700 pt-4">
+        <p className="mb-3 text-sm text-gray-400">
+          ¿También necesitas acompañamiento humano? Puedes agendarlo por separado.
+        </p>
+        <a
+          href="https://calendly.com/chalamandra/discovery"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block rounded-xl border border-white/15 px-6 py-3 font-bold text-white transition-colors hover:bg-white/10"
+        >
+          <i className="fa-solid fa-calendar-days mr-2" />
+          AGENDAR ACOMPAÑAMIENTO OPCIONAL
+        </a>
+      </div>
     </div>
   );
 
