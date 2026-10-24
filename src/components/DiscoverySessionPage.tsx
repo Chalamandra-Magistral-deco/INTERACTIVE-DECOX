@@ -70,7 +70,7 @@ const DiscoverySessionPage: React.FC = () => {
       <div className="reveal-on-scroll space-y-6 text-center">
         <div>
           <p className="mb-3 text-sm uppercase tracking-widest text-gray-500">
-            Inversión · 90 minutos
+            Inversión
           </p>
           <p className="mb-6 text-6xl font-black text-white">
             $27 <span className="text-xl text-gray-400">USD</span>
