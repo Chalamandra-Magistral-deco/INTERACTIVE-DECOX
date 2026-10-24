@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
 import { Analytics } from '@vercel/analytics/react';
 import App from './App';
+import DiscoveryLandingPage from './components/DiscoveryLandingPage';
 import { Telemetry } from './core/Telemetry';
 import './index.css';
 
@@ -27,10 +28,13 @@ if (!rootElement) {
 }
 
 const root = ReactDOM.createRoot(rootElement);
+const currentPath = window.location.pathname.replace(/\/+$/, "") || "/";
+const isDiscoveryRoute = currentPath === "/sesion-descubrimiento";
+
 root.render(
   <React.StrictMode>
     <HelmetProvider>
-      <App />
+      {isDiscoveryRoute ? <DiscoveryLandingPage /> : <App />}
       <Analytics />
     </HelmetProvider>
   </React.StrictMode>
