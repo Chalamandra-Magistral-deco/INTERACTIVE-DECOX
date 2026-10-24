@@ -73,8 +73,8 @@ const PremiumServices: React.FC<PremiumServicesProps> = ({
               $27 <span className="text-lg font-semibold text-gray-400">USD</span>
             </p>
             <p className="flex-grow text-gray-300">
-              Una inmersión de 90 minutos para diagnosticar tu arquetipo y
-              trazar tu mapa de ruta inicial.
+              Una experiencia web interactiva para explorar tu situación,
+              identificar puntos críticos y trazar una ruta inicial.
             </p>
 
             <div className="mt-8 space-y-3">
