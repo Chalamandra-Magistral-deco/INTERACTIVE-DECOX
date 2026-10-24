@@ -37,7 +37,7 @@ const ModalManager: React.FC<ModalManagerProps> = ({
   switch (modalState.type) {
     case "discovery":
       title = "Sesión Descubrimiento";
-      subtitle = "Tu primer paso hacia la decodificación.";
+      subtitle = "";
       modalBody = <DiscoverySessionPage />;
       break;
 
@@ -135,7 +135,7 @@ const ModalManager: React.FC<ModalManagerProps> = ({
             <h3 className="text-3xl font-black tracking-tighter text-white md:text-4xl">
               {title}
             </h3>
-            <p className="mt-2 font-medium text-gray-500">{subtitle}</p>
+            {subtitle && <p className="mt-2 font-medium text-gray-500">{subtitle}</p>}
           </div>
           <button
             type="button"
