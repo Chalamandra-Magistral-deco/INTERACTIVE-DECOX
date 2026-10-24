@@ -348,6 +348,7 @@ const App: React.FC = () => {
         <Introduction />
         <HowItWorks />
 
+        <div id="diagnostico" className="scroll-mt-24">
         {!dominantArchetype ? (
           <Suspense fallback={<SectionLoader />}>
             <ArchetypeQuiz
@@ -378,6 +379,7 @@ const App: React.FC = () => {
             </Suspense>
           </>
         )}
+        </div>
 
         <HacksSection
           hacks={HACKS_DATA}
