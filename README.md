@@ -56,6 +56,7 @@ Copia `.env.example` a tu entorno de desarrollo o configura las variables en la 
 ### Públicas
 
 - `VITE_STRIPE_DISCOVERY_URL`
+- `VITE_DISCOVERY_APP_URL` — URL HTTPS verificada de la aplicación independiente de Sesión de Descubrimiento.
 - `VITE_STRIPE_MAGISTRAL_URL`
 - `VITE_WHATSAPP_NUMBER`
 - `VITE_WHATSAPP_MESSAGE`
@@ -83,6 +84,12 @@ Payment Link de Stripe
            │
            ▼
        UI verificada
+           │
+           ▼
+  VITE_DISCOVERY_APP_URL
+           │
+           ▼
+  Sesión de Descubrimiento
 ```
 
 La interfaz nunca considera una compra válida por una simple bandera de URL.
