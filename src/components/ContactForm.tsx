@@ -17,7 +17,7 @@ const initialFormData: FormData = {
   email: "",
   phone: "",
   objective: "",
-  service: "Transformación Total",
+  service: "Consulta general",
   website: "",
 };
 
@@ -96,15 +96,15 @@ const ContactForm: React.FC = () => {
   };
 
   return (
-    <section className="mx-auto max-w-4xl px-6 py-20">
+    <section id="contacto-empresa" className="scroll-mt-24 mx-auto max-w-4xl px-6 py-20">
       <h2 className="mb-6 text-center text-4xl font-black text-purple-400">
         <i className="fa-solid fa-feather-pointed mr-4" />
-        APLICA A TU TRANSFORMACIÓN
+        HABLEMOS DE TU OBJETIVO
       </h2>
 
       <p className="mb-12 text-center text-xl font-semibold italic text-gray-300">
-        El primer paso no se da, se invoca. Llena el formulario para iniciar tu
-        decodificación.
+        Cuéntanos qué quieres mejorar y qué reto necesitas resolver. El equipo de
+        Chalamandra Magistral recibirá tu solicitud y dará seguimiento.
       </p>
 
       <div className={formContainerClass}>
@@ -195,8 +195,9 @@ const ContactForm: React.FC = () => {
                 onChange={handleChange}
                 aria-label="Servicio de Interés"
               >
-                <option>Transformación Total</option>
-                <option>Sesión Descubrimiento</option>
+                <option value="Consulta general">Consulta general</option>
+                <option value="Sesión de Descubrimiento">Sesión de Descubrimiento</option>
+                <option value="Solución para empresas y equipos">Solución para empresas y equipos</option>
               </select>
             </div>
           </div>
@@ -231,7 +232,7 @@ const ContactForm: React.FC = () => {
                 ENVIANDO...
               </>
             ) : (
-              "INICIAR PROTOCOLO DE CONTACTO"
+              "ENVIAR SOLICITUD"
             )}
           </button>
         </form>
