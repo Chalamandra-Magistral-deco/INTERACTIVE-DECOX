@@ -69,7 +69,7 @@ const PremiumServices: React.FC<PremiumServicesProps> = ({
       <div className="mx-auto grid max-w-5xl grid-cols-1 items-stretch gap-6 lg:grid-cols-[1.1fr_0.9fr]">
         <article className="flex flex-col rounded-3xl border border-yellow-400/40 bg-gradient-to-b from-yellow-400/[0.09] to-gray-950 p-7 shadow-2xl shadow-yellow-950/20 md:p-9">
           <p className="mb-4 text-xs font-black uppercase tracking-[0.18em] text-yellow-300">
-            Servicio individual · 90 minutos
+            Servicio individual
           </p>
           <h3 className="mb-4 text-2xl font-black text-white md:text-3xl">
             Sesión de Descubrimiento
@@ -83,7 +83,7 @@ const PremiumServices: React.FC<PremiumServicesProps> = ({
           </p>
           <ul className="mb-8 space-y-2 text-sm text-gray-300">
             <li>✓ Recorrido web con rutas diferenciadas</li>
-            <li>✓ Sesión en vivo de 90 minutos</li>
+            <li>✓ Sesión en vivo</li>
             <li>✓ Síntesis del reto y próximos pasos iniciales</li>
           </ul>
           <div className="mt-auto space-y-3">
