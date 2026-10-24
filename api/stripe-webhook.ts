@@ -64,7 +64,6 @@ export async function POST(request: Request): Promise<Response> {
     return json({ error: "Missing Stripe event id" }, 400);
   }
 
-
   const supported = new Set([
     "checkout.session.completed",
     "checkout.session.async_payment_succeeded",
@@ -73,37 +72,42 @@ export async function POST(request: Request): Promise<Response> {
   if (supported.has(event.type || "")) {
     const fulfillmentUrl = process.env.PURCHASE_EVENT_WEBHOOK_URL?.trim();
 
-    if (fulfillmentUrl) {
-      try {
-        const fulfillmentResponse = await fetch(fulfillmentUrl, {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-            "idempotency-key": event.id,
-          },
-          body: JSON.stringify({
-            event_id: event.id,
-            event_type: event.type,
-            session_id: event.data?.object?.id || null,
-            payment_status: event.data?.object?.payment_status || null,
-          }),
-          signal: AbortSignal.timeout(3000),
-        });
+    // Never acknowledge a paid checkout event as successful unless the durable
+    // fulfillment receiver is configured. A 5xx lets Stripe retry delivery
+    // after the receiver has been configured instead of silently losing it.
+    if (!fulfillmentUrl) {
+      return json({ error: "Purchase fulfillment is not configured" }, 503);
+    }
 
-        if (!fulfillmentResponse.ok) {
-          return json({ error: "Downstream fulfillment failed" }, 502);
-        }
-      } catch (error) {
-        console.error(
-          "Fulfillment provider error:",
-          error instanceof Error ? error.message : "unknown",
-        );
+    try {
+      const fulfillmentResponse = await fetch(fulfillmentUrl, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "idempotency-key": event.id,
+        },
+        body: JSON.stringify({
+          event_id: event.id,
+          event_type: event.type,
+          session_id: event.data?.object?.id || null,
+          payment_status: event.data?.object?.payment_status || null,
+        }),
+        signal: AbortSignal.timeout(3000),
+      });
+
+      if (!fulfillmentResponse.ok) {
         return json({ error: "Downstream fulfillment failed" }, 502);
       }
+    } catch (error) {
+      console.error(
+        "Fulfillment provider error:",
+        error instanceof Error ? error.message : "unknown",
+      );
+      return json({ error: "Downstream fulfillment failed" }, 502);
     }
   }
 
-  // Always acknowledge a verified Stripe event quickly. Durable fulfillment
-  // belongs in the configured downstream system, not in the browser.
+  // Non-purchase events can be acknowledged. Supported purchase events only
+  // reach this point after the downstream fulfillment receiver succeeds.
   return json({ received: true });
 }
