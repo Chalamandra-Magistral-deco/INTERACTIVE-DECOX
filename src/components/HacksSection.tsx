@@ -54,17 +54,17 @@ const HacksSection: React.FC<HacksSectionProps> = ({ hacks, completedHacks, onAc
     });
 
     return (
-        <section className="py-32 px-6 bg-black relative overflow-hidden">
+        <section id="productos" className="scroll-mt-24 py-24 px-6 bg-black relative overflow-hidden">
             {/* Background elements */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
             
             <div className="max-w-7xl mx-auto relative z-10">
                 <div className="text-center mb-24 space-y-4">
                     <h2 className="text-5xl md:text-7xl font-black text-white tracking-tighter uppercase">
-                        Arsenal de <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">Hacks</span>
+                        Productos y <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">herramientas</span>
                     </h2>
                     <p className="text-xl text-gray-500 max-w-2xl mx-auto font-medium">
-                        Protocolos de reingeniería cognitiva estructurados por arquetipo para un dominio total de la realidad.
+                        Explora los Hacks Magistrales por arquetipo. Cada protocolo combina una explicación, ejercicios y una oportunidad para ponerlo en práctica.
                     </p>
                 </div>
 
