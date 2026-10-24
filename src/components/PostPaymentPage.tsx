@@ -7,6 +7,7 @@ import { Archetype, ServiceType } from "@/utils/types";
 interface PostPaymentPageProps {
   serviceName: ServiceType;
   archetype: Archetype | null;
+  checkoutSessionId?: string;
 }
 
 const SERVICE_LABELS: Record<ServiceType, string> = {
@@ -16,9 +17,21 @@ const SERVICE_LABELS: Record<ServiceType, string> = {
 const PostPaymentPage: React.FC<PostPaymentPageProps> = ({
   serviceName,
   archetype,
+  checkoutSessionId,
 }) => {
   const [directive, setDirective] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const discoveryAppUrl = import.meta.env.VITE_DISCOVERY_APP_URL?.trim() || "";
+  const discoveryHandoffUrl = (() => {
+    if (!discoveryAppUrl || !checkoutSessionId) return null;
+    try {
+      const target = new URL(discoveryAppUrl);
+      target.searchParams.set("session_id", checkoutSessionId);
+      return target.toString();
+    } catch {
+      return null;
+    }
+  })();
 
   useEffect(() => {
     let active = true;
@@ -52,6 +65,19 @@ const PostPaymentPage: React.FC<PostPaymentPageProps> = ({
         Tu pago fue verificado. El siguiente paso es agendar tu sesión de
         descubrimiento.
       </p>
+      {discoveryHandoffUrl ? (
+        <a
+          href={discoveryHandoffUrl}
+          className="inline-block rounded-xl bg-green-500 px-8 py-4 font-black text-black shadow-xl transition-all hover:scale-105 hover:bg-green-400"
+        >
+          <i className="fa-solid fa-arrow-up-right-from-square mr-2" />
+          ABRIR SESIÓN DE DESCUBRIMIENTO
+        </a>
+      ) : (
+        <p className="text-sm text-amber-300">
+          El acceso interactivo aún no está configurado. Contacta al equipo para recibir tu enlace de entrega.
+        </p>
+      )}
       <a
         href="https://calendly.com/chalamandra/discovery"
         target="_blank"

@@ -140,7 +140,7 @@ const App: React.FC = () => {
       setModalState({
         isOpen: true,
         type: "postPayment",
-        data: { serviceName: service, archetype },
+        data: { serviceName: service, archetype, checkoutSessionId: sessionId },
       });
     };
 

@@ -103,6 +103,7 @@ const ModalManager: React.FC<ModalManagerProps> = ({
         <PostPaymentPage
           serviceName={postPayment.serviceName}
           archetype={postPayment.archetype}
+          checkoutSessionId={postPayment.checkoutSessionId}
         />
       );
       break;

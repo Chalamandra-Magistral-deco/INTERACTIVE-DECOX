@@ -70,6 +70,7 @@ export type ServiceType = "discovery";
 export interface PostPaymentData {
   serviceName: ServiceType;
   archetype: Archetype | null;
+  checkoutSessionId?: string;
 }
 
 export type ModalType =
