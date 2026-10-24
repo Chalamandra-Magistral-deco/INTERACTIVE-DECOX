@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { generatePostPaymentDirective } from "@/services/geminiService";
+import { DISCOVERY_APP_URL } from "@/config/public";
 import { T } from "@/core/Telemetry";
 import { Archetype, ServiceType } from "@/utils/types";
 
@@ -47,20 +48,35 @@ const PostPaymentPage: React.FC<PostPaymentPageProps> = ({
   }, [serviceName, archetype]);
 
   const renderDeliveryAction = (): React.ReactNode => (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <p className="text-lg text-gray-300">
-        Tu pago fue verificado. El siguiente paso es agendar tu sesión de
-        descubrimiento.
+        Tu pago fue verificado por Stripe. Continúa con tu Sesión de Descubrimiento y después agenda la conversación de seguimiento.
       </p>
-      <a
-        href="https://calendly.com/chalamandra/discovery"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-block rounded-xl bg-yellow-500 px-8 py-4 font-black text-black shadow-xl transition-all hover:scale-105 hover:bg-yellow-400"
-      >
-        <i className="fa-solid fa-calendar-days mr-2" />
-        AGENDAR SESIÓN AHORA
-      </a>
+      {DISCOVERY_APP_URL ? (
+        <a
+          href={DISCOVERY_APP_URL}
+          className="inline-flex w-full items-center justify-center rounded-xl bg-yellow-500 px-6 py-4 font-black text-black shadow-xl transition-all hover:scale-[1.01] hover:bg-yellow-400 sm:w-auto"
+        >
+          <i className="fa-solid fa-compass mr-2" />
+          INICIAR SESIÓN DE DESCUBRIMIENTO
+          <i className="fa-solid fa-arrow-up-right-from-square ml-2 text-sm" />
+        </a>
+      ) : (
+        <p role="status" className="rounded-xl border border-yellow-500/30 bg-yellow-500/10 p-4 text-sm leading-relaxed text-yellow-100">
+          El pago está confirmado. La dirección de la aplicación de Descubrimiento todavía no está configurada; conserva esta confirmación y agenda tu sesión mientras se habilita la entrega interactiva.
+        </p>
+      )}
+      <div>
+        <a
+          href="https://calendly.com/chalamandra/discovery"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block rounded-xl border border-white/15 px-6 py-3 font-bold text-white transition-colors hover:bg-white/10"
+        >
+          <i className="fa-solid fa-calendar-days mr-2" />
+          AGENDAR SESIÓN
+        </a>
+      </div>
     </div>
   );
 
